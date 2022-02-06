@@ -73,36 +73,37 @@ static void add_token(struct utl_array_list *toks, enum lang_tok_type type,
         utl_add_array_list_elem(toks, &tok);
 }
 
-static inline void lex_special(struct utl_array_list *toks, const char **c)
+static inline void lex_special(struct utl_array_list *toks,
+                               const char **cur_char)
 {
         char special_buf[2] = {
-                **c, '\0',
+                **cur_char, '\0',
         };
 
-        add_token(toks, to_tok_type(**c), special_buf);
+        add_token(toks, to_tok_type(**cur_char), special_buf);
 
-        (*c)++;
+        (*cur_char)++;
 }
 
 static inline void lex_number_literal(struct utl_array_list *toks,
-                                      const char **c)
+                                      const char **cur_char)
 {
         char buf[LANG_LEX_BUFFER_SIZE];
         memset(buf, '\0', LANG_LEX_BUFFER_SIZE);
 
         uint32_t buf_ind = 0;
 
-        while (isdigit(**c) || **c == '.') {
-                buf[buf_ind] = **c;
+        while (isdigit(**cur_char) || **cur_char == '.') {
+                buf[buf_ind] = **cur_char;
                 buf_ind++;
-                (*c)++;
+                (*cur_char)++;
         }
 
         add_token(toks, LANG_TOK_TYPE_NUMBER_LITERAL, buf);
 }
 
 static inline void lex_string_literal(struct utl_array_list *toks,
-                                      const char **c)
+                                      const char **cur_char)
 {
         char buf[LANG_LEX_BUFFER_SIZE];
         memset(buf, '\0', LANG_LEX_BUFFER_SIZE);
@@ -110,12 +111,12 @@ static inline void lex_string_literal(struct utl_array_list *toks,
         uint32_t buf_ind = 0;
 
         // dont lex the first quote of the string
-        (*c)++;
+        (*cur_char)++;
 
-        while (**c != '"') {
-                buf[buf_ind] = **c;
+        while (**cur_char != '"') {
+                buf[buf_ind] = **cur_char;
                 buf_ind++;
-                (*c)++;
+                (*cur_char)++;
         }
         
         add_token(toks, LANG_TOK_TYPE_STRING_LITERAL, buf);
@@ -124,21 +125,21 @@ static inline void lex_string_literal(struct utl_array_list *toks,
         skip past last quote or else lex will immediately try to create
         another string literal, causing a segfault
         */
-        (*c)++;
+        (*cur_char)++;
 }
 
 static inline void lex_identifier(struct utl_array_list *toks,
-                                  const char **c)
+                                  const char **cur_char)
 {
         char buf[LANG_LEX_BUFFER_SIZE];
         memset(buf, '\0', LANG_LEX_BUFFER_SIZE);
         
         uint32_t buf_ind = 0;
 
-        while (isalpha(**c) || **c == '_') {
-                buf[buf_ind] = **c;
+        while (isalpha(**cur_char) || **cur_char == '_') {
+                buf[buf_ind] = **cur_char;
                 buf_ind++;
-                (*c)++;
+                (*cur_char)++;
         }
 
         add_token(toks, LANG_TOK_TYPE_IDENTIFIER, buf);
@@ -147,19 +148,19 @@ static inline void lex_identifier(struct utl_array_list *toks,
 // src needs to be null terminated
 void lang_lex(struct utl_array_list *toks, const char *src)
 {
-        const char *c = src;
+        const char *cur_char = src;
 
-        while (*c != '\0') {
-                if (is_special(*c))
-                        lex_special(toks, &c);
-                else if (isdigit(*c))
-                        lex_number_literal(toks, &c);
-                else if (*c == '"')
-                        lex_string_literal(toks, &c);
-                else if (isalpha(*c) || *c == '_')
-                        lex_identifier(toks, &c);
+        while (*cur_char != '\0') {
+                if (is_special(*cur_char))
+                        lex_special(toks, &cur_char);
+                else if (isdigit(*cur_char))
+                        lex_number_literal(toks, &cur_char);
+                else if (*cur_char == '"')
+                        lex_string_literal(toks, &cur_char);
+                else if (isalpha(*cur_char) || *cur_char == '_')
+                        lex_identifier(toks, &cur_char);
                 else
-                        c++;
+                        cur_char++;
         }
 }
 
