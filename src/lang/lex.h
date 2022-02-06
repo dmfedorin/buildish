@@ -44,6 +44,7 @@ enum lang_tok_type {
 
         LANG_TOK_TYPE_NUMBER_LITERAL,
         LANG_TOK_TYPE_STRING_LITERAL,
+        LANG_TOK_TYPE_IDENTIFIER,
 };
 
 struct lang_tok {

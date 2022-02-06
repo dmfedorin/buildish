@@ -60,11 +60,28 @@ static void add_token(struct utl_array_list *toks, enum lang_tok_type type,
 {
         struct lang_tok tok = {
                 .type = type,
-                .value = malloc(strlen(value))
+                .value = malloc(strlen(value) + 1)
         };
+
+        /*
+        add a null character at the end of the tokens value as it wouldnt
+        normally be added, and is required in null terminated strings
+        */
+        tok.value[strlen(value)] = '\0';
 
         memcpy(tok.value, value, strlen(value));
         utl_add_array_list_elem(toks, &tok);
+}
+
+static inline void lex_special(struct utl_array_list *toks, const char **c)
+{
+        char special_buf[2] = {
+                **c, '\0',
+        };
+
+        add_token(toks, to_tok_type(**c), special_buf);
+
+        (*c)++;
 }
 
 static inline void lex_number_literal(struct utl_array_list *toks,
@@ -100,14 +117,31 @@ static inline void lex_string_literal(struct utl_array_list *toks,
                 buf_ind++;
                 (*c)++;
         }
+        
+        add_token(toks, LANG_TOK_TYPE_STRING_LITERAL, buf);
 
         /*
         skip past last quote or else lex will immediately try to create
         another string literal, causing a segfault
         */
         (*c)++;
+}
 
-        add_token(toks, LANG_TOK_TYPE_STRING_LITERAL, buf);
+static inline void lex_identifier(struct utl_array_list *toks,
+                                  const char **c)
+{
+        char buf[LANG_LEX_BUFFER_SIZE];
+        memset(buf, '\0', LANG_LEX_BUFFER_SIZE);
+        
+        uint32_t buf_ind = 0;
+
+        while (isalpha(**c) || **c == '_') {
+                buf[buf_ind] = **c;
+                buf_ind++;
+                (*c)++;
+        }
+
+        add_token(toks, LANG_TOK_TYPE_IDENTIFIER, buf);
 }
 
 // src needs to be null terminated
@@ -116,10 +150,14 @@ void lang_lex(struct utl_array_list *toks, const char *src)
         const char *c = src;
 
         while (*c != '\0') {
-                if (isdigit(*c))
+                if (is_special(*c))
+                        lex_special(toks, &c);
+                else if (isdigit(*c))
                         lex_number_literal(toks, &c);
                 else if (*c == '"')
                         lex_string_literal(toks, &c);
+                else if (isalpha(*c) || *c == '_')
+                        lex_identifier(toks, &c);
                 else
                         c++;
         }
@@ -160,6 +198,7 @@ static char to_char(enum lang_tok_type type)
 
         case LANG_TOK_TYPE_NUMBER_LITERAL: return 'n';
         case LANG_TOK_TYPE_STRING_LITERAL: return 's';
+        case LANG_TOK_TYPE_IDENTIFIER:     return 'i';
 
         default: return 'U';
         }
@@ -170,7 +209,7 @@ void lang_print_toks(struct utl_array_list *toks)
         for (uint32_t i = 0; i < toks->size; i++) {
                 struct lang_tok *tok = utl_get_array_list_elem(toks, i);
 
-                printf("[%d] \"%s\" (%d, %c)\n", i, tok->value,
-                       tok->type, to_char(tok->type));
+                printf("[%d] (%d, %c) - \"%s\"\n", i, tok->type,
+                       to_char(tok->type), tok->value);
         }
 }

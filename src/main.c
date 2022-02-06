@@ -5,7 +5,7 @@ int main(void)
         struct utl_array_list toks;
         lang_init_toks(&toks);
 
-        const char *src = "123.23 342.5 3.141592653589 \"and stuff like this\"";
+        const char *src = "something_cool: (3.14159), \"string here\";";
 
         lang_lex(&toks, src);
         lang_print_toks(&toks);
