@@ -1,4 +1,5 @@
 #include "lang/lex.h"
+#include "lang/parse.h"
 
 int main(void)
 {
@@ -10,6 +11,12 @@ int main(void)
         lang_lex(&toks, src);
         lang_print_toks(&toks);
 
+        struct lang_ast_node root;
+        lang_init_ast(&root);
+
+        lang_print_ast(&root);
+
+        lang_clean_ast(&root);
         lang_clean_toks(&toks);
 
         return 0;

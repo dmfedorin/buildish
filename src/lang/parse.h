@@ -18,4 +18,6 @@ void lang_init_ast(struct lang_ast_node *root);
 
 void lang_clean_ast(struct lang_ast_node *root);
 
+void lang_print_ast(struct lang_ast_node *root);
+
 #endif
