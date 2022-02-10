@@ -13,8 +13,9 @@
 
 enum lang_tok_type {
         LANG_TOK_TYPE_NULL,
-
-        LANG_TOK_TYPE_BACKTICK,    // `
+        LANG_TOK_TYPE_SOF,
+        LANG_TOK_TYPE_EOF,
+        
         LANG_TOK_TYPE_TILDE,       // ~
         LANG_TOK_TYPE_EXCLAMATION, // !
         LANG_TOK_TYPE_AT,          // @
@@ -59,6 +60,6 @@ void lang_clean_toks(struct utl_array_list *toks);
 // src needs to be null terminated
 void lang_lex(struct utl_array_list *toks, const char *src);
 
-void lang_print_toks(struct utl_array_list *toks);
+void lang_print_toks(const struct utl_array_list *toks);
 
 #endif

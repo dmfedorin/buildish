@@ -8,7 +8,7 @@ void lang_init_toks(struct utl_array_list *toks)
 void lang_clean_toks(struct utl_array_list *toks)
 {
         for (uint32_t i = 0; i < toks->size; i++) {
-                struct lang_tok *tok = utl_get_array_list_elem(toks, i);
+                struct lang_tok *tok = (struct lang_tok *)toks->data + i;
                 free(tok->value);
         }
 
@@ -18,7 +18,6 @@ void lang_clean_toks(struct utl_array_list *toks)
 static enum lang_tok_type to_tok_type(char c)
 {
         switch (c) {
-        case '`': return LANG_TOK_TYPE_BACKTICK;
         case '~': return LANG_TOK_TYPE_TILDE;
         case '!': return LANG_TOK_TYPE_EXCLAMATION;
         case '@': return LANG_TOK_TYPE_AT;
@@ -71,6 +70,21 @@ static void add_token(struct utl_array_list *toks, enum lang_tok_type type,
 
         memcpy(tok.value, value, strlen(value));
         utl_add_array_list_elem(toks, &tok);
+}
+
+static inline void skip_comment(const char **cur_char)
+{
+        // the first backtick will end the comment if not skipped
+        (*cur_char)++;
+
+        while (**cur_char != '`')
+                (*cur_char)++;
+        
+        /*
+        skip one more character to stop another comment from being started
+        during lexing
+        */
+        (*cur_char)++;
 }
 
 static inline void lex_special(struct utl_array_list *toks,
@@ -148,10 +162,14 @@ static inline void lex_identifier(struct utl_array_list *toks,
 // src needs to be null terminated
 void lang_lex(struct utl_array_list *toks, const char *src)
 {
+        add_token(toks, LANG_TOK_TYPE_SOF, "SOF");
+        
         const char *cur_char = src;
 
         while (*cur_char != '\0') {
-                if (is_special(*cur_char))
+                if (*cur_char == '`')
+                        skip_comment(&cur_char);
+                else if (is_special(*cur_char))
                         lex_special(toks, &cur_char);
                 else if (isdigit(*cur_char))
                         lex_number_literal(toks, &cur_char);
@@ -162,14 +180,17 @@ void lang_lex(struct utl_array_list *toks, const char *src)
                 else
                         cur_char++;
         }
+
+        add_token(toks, LANG_TOK_TYPE_EOF, "EOF");
 }
 
 static char to_char(enum lang_tok_type type)
 {
         switch (type) {
         case LANG_TOK_TYPE_NULL: return 'N';
+        case LANG_TOK_TYPE_SOF:  return 'S';
+        case LANG_TOK_TYPE_EOF:  return 'E';
 
-        case LANG_TOK_TYPE_BACKTICK:    return '`';
         case LANG_TOK_TYPE_TILDE:       return '~';
         case LANG_TOK_TYPE_EXCLAMATION: return '!';
         case LANG_TOK_TYPE_AT:          return '@';
@@ -205,10 +226,10 @@ static char to_char(enum lang_tok_type type)
         }
 }
 
-void lang_print_toks(struct utl_array_list *toks)
+void lang_print_toks(const struct utl_array_list *toks)
 {
         for (uint32_t i = 0; i < toks->size; i++) {
-                struct lang_tok *tok = utl_get_array_list_elem(toks, i);
+                const struct lang_tok *tok = utl_get_array_list_elem(toks, i);
 
                 printf("[%d] (%d, %c) - \"%s\"\n", i, tok->type,
                        to_char(tok->type), tok->value);

@@ -12,7 +12,8 @@ void utl_clean_array_list(struct utl_array_list *al)
         free(al->data);
 }
 
-void *utl_get_array_list_elem(struct utl_array_list *al, uint32_t ind)
+const void *utl_get_array_list_elem(const struct utl_array_list *al,
+                                    uint32_t ind)
 {
         return al->data + al->stride * ind;
 }
@@ -20,7 +21,7 @@ void *utl_get_array_list_elem(struct utl_array_list *al, uint32_t ind)
 static inline __attribute__ ((always_inline))
 void *get_last_array_list_elem(struct utl_array_list *al)
 {
-        return utl_get_array_list_elem(al, utl_max(0, al->size - 1));
+        return al->data + al->stride * utl_max(0, al->size - 1);
 }
 
 void utl_add_array_list_elem(struct utl_array_list *al, const void *elem)
