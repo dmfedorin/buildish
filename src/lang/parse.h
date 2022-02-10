@@ -7,8 +7,8 @@
 #include "../util/debug.h"
 #include "../util/arraylist.h"
 
-#define LANG_PARSE_ERROR_UNEXPECTED "unexpected token"
-#define LANG_PARSE_ERROR_UNHANDLED  "unhandled token encountered"
+#define PARSE_ERROR_UNEXPECTED "unexpected token"
+#define PARSE_ERROR_UNHANDLED  "unhandled token encountered"
 
 /*
 add node types by order of how they use eachother
@@ -22,26 +22,25 @@ node types of equal order should be next to each other
 in parse.c, define the functions for parsing node types in the reverse order
 */
 
-enum lang_ast_node_type {
-        LANG_AST_NODE_TYPE_ROOT,
-        LANG_AST_NODE_TYPE_PROCEDURE,
-        LANG_AST_NODE_TYPE_BLOCK,
-        LANG_AST_NODE_TYPE_COMMAND,
-        LANG_AST_NODE_TYPE_CALL,
+enum ast_node_type {
+        AST_NODE_TYPE_ROOT,
+        AST_NODE_TYPE_PROCEDURE,
+        AST_NODE_TYPE_BLOCK,
+        AST_NODE_TYPE_COMMAND,
+        AST_NODE_TYPE_CALL,
 };
 
-struct lang_ast_node {
-        enum lang_ast_node_type type;
-        struct utl_array_list toks, children;
+struct ast_node {
+        enum ast_node_type type;
+        struct array_list toks, children;
 };
 
-void lang_init_ast(struct lang_ast_node *root);
+void init_ast(struct ast_node *root);
 
-void lang_clean_ast(struct lang_ast_node *root);
+void clean_ast(struct ast_node *root);
 
-void lang_parse(struct lang_ast_node *root,
-                const struct utl_array_list *toks);
+void parse(struct ast_node *root, const struct array_list *toks);
 
-void lang_print_ast(const struct lang_ast_node *root);
+void print_ast(const struct ast_node *root);
 
 #endif

@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
-uint64_t utl_get_file_size(const char *filepath);
+uint64_t get_file_size(const char *filepath);
 
-void utl_read_file(char *dst, const char *filepath);
+void read_file(char *dst, const char *filepath);
 
 #endif

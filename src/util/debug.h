@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void utl_log(const char *msg);
+void log_info(const char *msg);
 
-void utl_warning(const char *msg);
+void warning(const char *msg);
 
-void utl_error(const char *msg);
+void error(const char *msg);
 
 #endif

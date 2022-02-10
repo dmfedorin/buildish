@@ -1,16 +1,16 @@
 #include "debug.h"
 
-void utl_log(const char *msg)
+void log_info(const char *msg)
 {
         printf("LOG: \"%s\"\n", msg);
 }
 
-void utl_warning(const char *msg)
+void warning(const char *msg)
 {
         printf("WARNING: \"%s\"", msg);
 }
 
-void utl_error(const char *msg)
+void error(const char *msg)
 {
         printf("ERROR: \"%s\"\n", msg);
         exit(-1);
