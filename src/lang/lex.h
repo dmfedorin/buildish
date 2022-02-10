@@ -9,8 +9,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#define LEX_BUFFER_SIZE 1024
-
 enum tok_type {
         TOK_TYPE_NULL,
         TOK_TYPE_SOF,

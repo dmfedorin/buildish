@@ -1,5 +1,8 @@
 #include "parse.h"
 
+#define PARSE_ERROR_UNEXPECTED "unexpected token"
+#define PARSE_ERROR_UNHANDLED  "unhandled token encountered"
+
 void init_ast(struct ast_node *root)
 {
         root->type = AST_NODE_TYPE_ROOT;

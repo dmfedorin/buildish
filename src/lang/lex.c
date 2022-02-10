@@ -1,5 +1,7 @@
 #include "lex.h"
 
+#define LEX_BUFFER_SIZE 1024
+
 void init_toks(struct array_list *toks)
 {
         init_array_list(toks, sizeof(struct tok));

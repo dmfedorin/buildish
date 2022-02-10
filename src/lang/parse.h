@@ -7,9 +7,6 @@
 #include "../util/debug.h"
 #include "../util/arraylist.h"
 
-#define PARSE_ERROR_UNEXPECTED "unexpected token"
-#define PARSE_ERROR_UNHANDLED  "unhandled token encountered"
-
 /*
 add node types by order of how they use eachother
 
