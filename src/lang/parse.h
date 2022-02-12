@@ -19,25 +19,25 @@ node types of equal order should be next to each other
 in parse.c, define the functions for parsing node types in the reverse order
 */
 
-enum ast_node_type {
-        AST_NODE_TYPE_ROOT,
-        AST_NODE_TYPE_PROCEDURE,
-        AST_NODE_TYPE_BLOCK,
-        AST_NODE_TYPE_COMMAND,
-        AST_NODE_TYPE_CALL,
+enum astnodetype {
+        ANT_ROOT,
+        ANT_PROCEDURE,
+        ANT_BLOCK,
+        ANT_COMMAND,
+        ANT_CALL,
 };
 
-struct ast_node {
-        enum ast_node_type type;
-        struct array_list toks, children;
+struct astnode {
+        enum astnodetype type;
+        struct arraylist toks, children;
 };
 
-void init_ast(struct ast_node *root);
+void initast(struct astnode *root);
 
-void clean_ast(struct ast_node *root);
+void cleanast(struct astnode *root);
 
-void parse(struct ast_node *root, const struct array_list *toks);
+void parse(struct astnode *root, const struct arraylist *toks);
 
-void print_ast(const struct ast_node *root);
+void printast(const struct astnode *root);
 
 #endif

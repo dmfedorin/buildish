@@ -1,63 +1,63 @@
 #include "lex.h"
 
-#define LEX_BUFFER_SIZE 1024
+#define LEXBUFSIZE 1024
 
-void init_toks(struct array_list *toks)
+void inittoks(struct arraylist *toks)
 {
-        init_array_list(toks, sizeof(struct tok));
+        inital(toks, sizeof(struct tok));
 }
 
-void clean_toks(struct array_list *toks)
+void cleantoks(struct arraylist *toks)
 {
         for (uint32_t i = 0; i < toks->size; i++) {
                 struct tok *tok = (struct tok *)toks->data + i;
                 free(tok->value);
         }
 
-        clean_array_list(toks);
+        cleanal(toks);
 }
 
-static enum tok_type to_tok_type(char c)
+static enum toktype totoktype(char c)
 {
         switch (c) {
-        case '~': return TOK_TYPE_TILDE;
-        case '!': return TOK_TYPE_EXCLAMATION;
-        case '@': return TOK_TYPE_AT;
-        case '#': return TOK_TYPE_HASH;
-        case '$': return TOK_TYPE_DOLLAR;
-        case '%': return TOK_TYPE_PERCENTAGE;
-        case '^': return TOK_TYPE_CARET;
-        case '&': return TOK_TYPE_AMPERSAND;
-        case '*': return TOK_TYPE_ASTERISK;
-        case '-': return TOK_TYPE_HYPHEN;
-        case '=': return TOK_TYPE_EQUALS;
-        case '+': return TOK_TYPE_PLUS;
-        case ';': return TOK_TYPE_SEMICOLON;
-        case ':': return TOK_TYPE_COLON;
-        case '|': return TOK_TYPE_PIPE;
-        case '/': return TOK_TYPE_SLASH;
-        case '?': return TOK_TYPE_QUESTION;
+        case '~': return TT_TILDE;
+        case '!': return TT_EXCLAMATION;
+        case '@': return TT_AT;
+        case '#': return TT_HASH;
+        case '$': return TT_DOLLAR;
+        case '%': return TT_PERCENTAGE;
+        case '^': return TT_CARET;
+        case '&': return TT_AMPERSAND;
+        case '*': return TT_ASTERISK;
+        case '-': return TT_HYPHEN;
+        case '=': return TT_EQUALS;
+        case '+': return TT_PLUS;
+        case ';': return TT_SEMICOLON;
+        case ':': return TT_COLON;
+        case '|': return TT_PIPE;
+        case '/': return TT_SLASH;
+        case '?': return TT_QUESTION;
 
-        case '(': return TOK_TYPE_LPAREN;
-        case ')': return TOK_TYPE_RPAREN;
-        case '[': return TOK_TYPE_LBRACKET;
-        case ']': return TOK_TYPE_RBRACKET;
-        case '{': return TOK_TYPE_LBRACE;
-        case '}': return TOK_TYPE_RBRACE;
-        case '<': return TOK_TYPE_LANGLE;
-        case '>': return TOK_TYPE_RANGLE;
+        case '(': return TT_LPAREN;
+        case ')': return TT_RPAREN;
+        case '[': return TT_LBRACKET;
+        case ']': return TT_RBRACKET;
+        case '{': return TT_LBRACE;
+        case '}': return TT_RBRACE;
+        case '<': return TT_LANGLE;
+        case '>': return TT_RANGLE;
 
-        default: return TOK_TYPE_NULL;
+        default: return TT_NULL;
         }
 }
 
-static inline __attribute__ ((always_inline)) bool is_special(char c)
+static inline __attribute__ ((always_inline)) bool isspecial(char c)
 {
-        return to_tok_type(c) != TOK_TYPE_NULL;
+        return totoktype(c) != TT_NULL;
 }
 
-static void add_token(struct array_list *toks, enum tok_type type,
-                      const char *value)
+static void addtok(struct arraylist *toks, enum toktype type,
+                   const char *value)
 {
         struct tok tok = {
                 .type = type,
@@ -71,169 +71,165 @@ static void add_token(struct array_list *toks, enum tok_type type,
         tok.value[strlen(value)] = '\0';
 
         memcpy(tok.value, value, strlen(value));
-        add_array_list_elem(toks, &tok);
+        addalelem(toks, &tok);
 }
 
-static inline void skip_comment(const char **cur_char)
+static inline void skipcomment(const char **curchar)
 {
         // the first backtick will end the comment if not skipped
-        (*cur_char)++;
+        (*curchar)++;
 
-        while (**cur_char != '`')
-                (*cur_char)++;
+        while (**curchar != '`')
+                (*curchar)++;
         
         /*
         skip one more character to stop another comment from being started
         during lexing
         */
-        (*cur_char)++;
+        (*curchar)++;
 }
 
-static inline void lex_special(struct array_list *toks,
-                               const char **cur_char)
+static inline void lexspecial(struct arraylist *toks, const char **curchar)
 {
-        char special_buf[2] = {
-                **cur_char, '\0',
+        char buf[2] = {
+                **curchar, '\0',
         };
 
-        add_token(toks, to_tok_type(**cur_char), special_buf);
+        addtok(toks, totoktype(**curchar), buf);
 
-        (*cur_char)++;
+        (*curchar)++;
 }
 
-static inline void lex_number_literal(struct array_list *toks,
-                                      const char **cur_char)
+static inline void lexnumliteral(struct arraylist *toks, const char **curchar)
 {
-        char buf[LEX_BUFFER_SIZE];
-        memset(buf, '\0', LEX_BUFFER_SIZE);
+        char buf[LEXBUFSIZE];
+        memset(buf, '\0', LEXBUFSIZE);
 
-        uint32_t buf_ind = 0;
+        uint32_t bufind = 0;
 
-        while (isdigit(**cur_char) || **cur_char == '.') {
-                buf[buf_ind] = **cur_char;
-                buf_ind++;
-                (*cur_char)++;
+        while (isdigit(**curchar) || **curchar == '.') {
+                buf[bufind] = **curchar;
+                bufind++;
+                (*curchar)++;
         }
 
-        add_token(toks, TOK_TYPE_NUMBER_LITERAL, buf);
+        addtok(toks, TT_NUMLITERAL, buf);
 }
 
-static inline void lex_string_literal(struct array_list *toks,
-                                      const char **cur_char)
+static inline void lexstrliteral(struct arraylist *toks, const char **curchar)
 {
-        char buf[LEX_BUFFER_SIZE];
-        memset(buf, '\0', LEX_BUFFER_SIZE);
+        char buf[LEXBUFSIZE];
+        memset(buf, '\0', LEXBUFSIZE);
         
-        uint32_t buf_ind = 0;
+        uint32_t bufind = 0;
 
         // dont lex the first quote of the string
-        (*cur_char)++;
+        (*curchar)++;
 
-        while (**cur_char != '"') {
-                buf[buf_ind] = **cur_char;
-                buf_ind++;
-                (*cur_char)++;
+        while (**curchar != '"') {
+                buf[bufind] = **curchar;
+                bufind++;
+                (*curchar)++;
         }
         
-        add_token(toks, TOK_TYPE_STRING_LITERAL, buf);
+        addtok(toks, TT_STRLITERAL, buf);
 
         /*
         skip past last quote or else lex will immediately try to create
         another string literal, causing a segfault
         */
-        (*cur_char)++;
+        (*curchar)++;
 }
 
-static inline void lex_identifier(struct array_list *toks,
-                                  const char **cur_char)
+static inline void lexidentifier(struct arraylist *toks, const char **curchar)
 {
-        char buf[LEX_BUFFER_SIZE];
-        memset(buf, '\0', LEX_BUFFER_SIZE);
+        char buf[LEXBUFSIZE];
+        memset(buf, '\0', LEXBUFSIZE);
         
-        uint32_t buf_ind = 0;
+        uint32_t bufind = 0;
 
-        while (isalpha(**cur_char) || **cur_char == '_') {
-                buf[buf_ind] = **cur_char;
-                buf_ind++;
-                (*cur_char)++;
+        while (isalpha(**curchar) || **curchar == '_') {
+                buf[bufind] = **curchar;
+                bufind++;
+                (*curchar)++;
         }
 
-        add_token(toks, TOK_TYPE_IDENTIFIER, buf);
+        addtok(toks, TT_IDENTIFIER, buf);
 }
 
 // src needs to be null terminated
-void lex(struct array_list *toks, const char *src)
+void lex(struct arraylist *toks, const char *src)
 {
-        add_token(toks, TOK_TYPE_SOF, "SOF");
+        addtok(toks, TT_SOF, "SOF");
         
-        const char *cur_char = src;
+        const char *curchar = src;
 
-        while (*cur_char != '\0') {
-                if (*cur_char == '`')
-                        skip_comment(&cur_char);
-                else if (is_special(*cur_char))
-                        lex_special(toks, &cur_char);
-                else if (isdigit(*cur_char))
-                        lex_number_literal(toks, &cur_char);
-                else if (*cur_char == '"')
-                        lex_string_literal(toks, &cur_char);
-                else if (isalpha(*cur_char) || *cur_char == '_')
-                        lex_identifier(toks, &cur_char);
+        while (*curchar != '\0') {
+                if (*curchar == '`')
+                        skipcomment(&curchar);
+                else if (isspecial(*curchar))
+                        lexspecial(toks, &curchar);
+                else if (isdigit(*curchar))
+                        lexnumliteral(toks, &curchar);
+                else if (*curchar == '"')
+                        lexstrliteral(toks, &curchar);
+                else if (isalpha(*curchar) || *curchar == '_')
+                        lexidentifier(toks, &curchar);
                 else
-                        cur_char++;
+                        curchar++;
         }
 
-        add_token(toks, TOK_TYPE_EOF, "EOF");
+        addtok(toks, TT_EOF, "EOF");
 }
 
-static char to_char(enum tok_type type)
+static char tochar(enum toktype type)
 {
         switch (type) {
-        case TOK_TYPE_NULL: return 'N';
-        case TOK_TYPE_SOF:  return 'S';
-        case TOK_TYPE_EOF:  return 'E';
+        case TT_NULL: return 'N';
+        case TT_SOF:  return 'S';
+        case TT_EOF:  return 'E';
 
-        case TOK_TYPE_TILDE:       return '~';
-        case TOK_TYPE_EXCLAMATION: return '!';
-        case TOK_TYPE_AT:          return '@';
-        case TOK_TYPE_HASH:        return '#';
-        case TOK_TYPE_DOLLAR:      return '$';
-        case TOK_TYPE_PERCENTAGE:  return '%';
-        case TOK_TYPE_CARET:       return '^';
-        case TOK_TYPE_AMPERSAND:   return '&';
-        case TOK_TYPE_ASTERISK:    return '*';
-        case TOK_TYPE_HYPHEN:      return '-';
-        case TOK_TYPE_EQUALS:      return '=';
-        case TOK_TYPE_PLUS:        return '+';
-        case TOK_TYPE_SEMICOLON:   return ';';
-        case TOK_TYPE_COLON:       return ':';
-        case TOK_TYPE_PIPE:        return '|';
-        case TOK_TYPE_SLASH:       return '/';
-        case TOK_TYPE_QUESTION:    return '?';
+        case TT_TILDE:       return '~';
+        case TT_EXCLAMATION: return '!';
+        case TT_AT:          return '@';
+        case TT_HASH:        return '#';
+        case TT_DOLLAR:      return '$';
+        case TT_PERCENTAGE:  return '%';
+        case TT_CARET:       return '^';
+        case TT_AMPERSAND:   return '&';
+        case TT_ASTERISK:    return '*';
+        case TT_HYPHEN:      return '-';
+        case TT_EQUALS:      return '=';
+        case TT_PLUS:        return '+';
+        case TT_SEMICOLON:   return ';';
+        case TT_COLON:       return ':';
+        case TT_PIPE:        return '|';
+        case TT_SLASH:       return '/';
+        case TT_QUESTION:    return '?';
 
-        case TOK_TYPE_LPAREN:   return '(';
-        case TOK_TYPE_RPAREN:   return ')';
-        case TOK_TYPE_LBRACKET: return '[';
-        case TOK_TYPE_RBRACKET: return ']';
-        case TOK_TYPE_LBRACE:   return '{';
-        case TOK_TYPE_RBRACE:   return '}';
-        case TOK_TYPE_LANGLE:   return '<';
-        case TOK_TYPE_RANGLE:   return '>';
+        case TT_LPAREN:   return '(';
+        case TT_RPAREN:   return ')';
+        case TT_LBRACKET: return '[';
+        case TT_RBRACKET: return ']';
+        case TT_LBRACE:   return '{';
+        case TT_RBRACE:   return '}';
+        case TT_LANGLE:   return '<';
+        case TT_RANGLE:   return '>';
 
-        case TOK_TYPE_NUMBER_LITERAL: return 'n';
-        case TOK_TYPE_STRING_LITERAL: return 's';
-        case TOK_TYPE_IDENTIFIER:     return 'i';
+        case TT_NUMLITERAL: return 'n';
+        case TT_STRLITERAL: return 's';
+        case TT_IDENTIFIER: return 'i';
 
         default: return 'U';
         }
 }
 
-void print_toks(const struct array_list *toks)
+void printtoks(const struct arraylist *toks)
 {
         for (uint32_t i = 0; i < toks->size; i++) {
-                const struct tok *tok = get_array_list_elem(toks, i);
+                const struct tok *tok = getalelem(toks, i);
 
                 printf("[%d] (%d, %c) - \"%s\"\n", i, tok->type,
-                       to_char(tok->type), tok->value);
+                       tochar(tok->type), tok->value);
         }
 }

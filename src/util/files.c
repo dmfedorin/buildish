@@ -1,6 +1,6 @@
 #include "files.h"
 
-uint64_t get_file_size(const char *filepath)
+uint64_t filesize(const char *filepath)
 {
         FILE *fp = fopen(filepath, "rb");
 
@@ -17,13 +17,13 @@ uint64_t get_file_size(const char *filepath)
         return size;
 }
 
-void read_file(char *dst, const char *filepath)
+void rdfile(char *dst, const char *filepath)
 {
         FILE *fp = fopen(filepath, "rb");
         
         if (fp == NULL)
                 perror("file error: ");
 
-        fread(dst, 1, get_file_size(filepath), fp);
+        fread(dst, 1, filesize(filepath), fp);
         fclose(fp);
 }

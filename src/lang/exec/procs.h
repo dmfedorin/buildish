@@ -14,9 +14,9 @@ struct proc {
 };
 
 // requires all procedure nodes to be children of the root node
-void find_procs(struct array_list *procs, const struct ast_node *root);
+void findprocs(struct arraylist *procs, const struct astnode *root);
 
-const struct ast_node *get_proc_node(const struct array_list *procs,
-                                     const char *name);
+const struct astnode *getprocnode(const struct arraylist *procs,
+                                  const char *name);
 
 #endif
