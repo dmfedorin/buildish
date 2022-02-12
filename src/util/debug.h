@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void log_info(const char *msg);
+void loginfo(const char *msg);
 
 void warning(const char *msg);
 

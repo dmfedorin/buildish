@@ -7,17 +7,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct array_list {
+struct arraylist {
         void *data;
         uint32_t size, stride;
 };
 
-void init_array_list(struct array_list *al, uint32_t stride);
+void inital(struct arraylist *al, uint32_t stride);
 
-void clean_array_list(struct array_list *al);
+void cleanal(struct arraylist *al);
 
-const void *get_array_list_elem(const struct array_list *al, uint32_t ind);
+const void *getalelem(const struct arraylist *al, uint32_t ind);
 
-void add_array_list_elem(struct array_list *al, const void *elem);
+void addalelem(struct arraylist *al, const void *elem);
 
 #endif

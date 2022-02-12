@@ -6,23 +6,23 @@
 
 int main(void)
 {
-        struct array_list toks;
-        init_toks(&toks);
+        struct arraylist toks;
+        inittoks(&toks);
 
-        char *src = malloc(get_file_size(FILEPATH));
-        read_file(src, FILEPATH);
+        char *src = malloc(filesize(FILEPATH));
+        rdfile(src, FILEPATH);
 
         lex(&toks, src);
-        print_toks(&toks);
+        printtoks(&toks);
 
-        struct ast_node root;
-        init_ast(&root);
+        struct astnode root;
+        initast(&root);
 
         parse(&root, &toks);
-        print_ast(&root);
+        printast(&root);
 
-        clean_ast(&root);
-        clean_toks(&toks);
+        cleanast(&root);
+        cleantoks(&toks);
 
         return 0;
 }

@@ -1,6 +1,6 @@
 #include "debug.h"
 
-void log_info(const char *msg)
+void loginfo(const char *msg)
 {
         printf("LOG: \"%s\"\n", msg);
 }

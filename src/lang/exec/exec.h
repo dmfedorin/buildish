@@ -9,6 +9,6 @@
 #include <stdint.h>
 #include <string.h>
 
-void execute(const struct ast_node *root);
+void execute(const struct astnode *root);
 
 #endif

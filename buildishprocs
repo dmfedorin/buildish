@@ -3,18 +3,18 @@ this is a testing file for making sure syntax is nice and parsing works
 correctly
 `
 
-@build
+@hello
 {
-        $("gcc -o main *.c");
+        $("echo hello");
 }
 
-@run
+@world
 {
-        $("./main");
+        $("echo world");
 }
 
 @main
 {
-        >(build);
-        >(run);
+        >(hello);
+        >(world);
 }

@@ -9,55 +9,55 @@
 #include <string.h>
 #include <stdio.h>
 
-enum tok_type {
-        TOK_TYPE_NULL,
-        TOK_TYPE_SOF,
-        TOK_TYPE_EOF,
+enum toktype {
+        TT_NULL,
+        TT_SOF,
+        TT_EOF,
         
-        TOK_TYPE_TILDE,       // ~
-        TOK_TYPE_EXCLAMATION, // !
-        TOK_TYPE_AT,          // @
-        TOK_TYPE_HASH,        // #
-        TOK_TYPE_DOLLAR,      // $
-        TOK_TYPE_PERCENTAGE,  // %
-        TOK_TYPE_CARET,       // ^
-        TOK_TYPE_AMPERSAND,   // &
-        TOK_TYPE_ASTERISK,    // *
-        TOK_TYPE_HYPHEN,      // -
-        TOK_TYPE_EQUALS,      // =
-        TOK_TYPE_PLUS,        // +
-        TOK_TYPE_SEMICOLON,   // ;
-        TOK_TYPE_COLON,       // :
-        TOK_TYPE_PIPE,        // |
-        TOK_TYPE_SLASH,       // /
-        TOK_TYPE_QUESTION,    // ?
+        TT_TILDE,       // ~
+        TT_EXCLAMATION, // !
+        TT_AT,          // @
+        TT_HASH,        // #
+        TT_DOLLAR,      // $
+        TT_PERCENTAGE,  // %
+        TT_CARET,       // ^
+        TT_AMPERSAND,   // &
+        TT_ASTERISK,    // *
+        TT_HYPHEN,      // -
+        TT_EQUALS,      // =
+        TT_PLUS,        // +
+        TT_SEMICOLON,   // ;
+        TT_COLON,       // :
+        TT_PIPE,        // |
+        TT_SLASH,       // /
+        TT_QUESTION,    // ?
 
-        TOK_TYPE_LPAREN,   // (
-        TOK_TYPE_RPAREN,   // )
-        TOK_TYPE_LBRACKET, // [
-        TOK_TYPE_RBRACKET, // ]
-        TOK_TYPE_LBRACE,   // {
-        TOK_TYPE_RBRACE,   // }
-        TOK_TYPE_LANGLE,   // <
-        TOK_TYPE_RANGLE,   // >
+        TT_LPAREN,   // (
+        TT_RPAREN,   // )
+        TT_LBRACKET, // [
+        TT_RBRACKET, // ]
+        TT_LBRACE,   // {
+        TT_RBRACE,   // }
+        TT_LANGLE,   // <
+        TT_RANGLE,   // >
 
-        TOK_TYPE_NUMBER_LITERAL,
-        TOK_TYPE_STRING_LITERAL,
-        TOK_TYPE_IDENTIFIER,
+        TT_NUMLITERAL,
+        TT_STRLITERAL,
+        TT_IDENTIFIER,
 };
 
 struct tok {
-        enum tok_type type;
+        enum toktype type;
         char *value;
 };
 
-void init_toks(struct array_list *toks);
+void inittoks(struct arraylist *toks);
 
-void clean_toks(struct array_list *toks);
+void cleantoks(struct arraylist *toks);
 
 // src needs to be null terminated
-void lex(struct array_list *toks, const char *src);
+void lex(struct arraylist *toks, const char *src);
 
-void print_toks(const struct array_list *toks);
+void printtoks(const struct arraylist *toks);
 
 #endif
