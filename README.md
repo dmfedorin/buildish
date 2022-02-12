@@ -2,6 +2,11 @@
 
 a build tool with curly brace and semicolon syntax.
 
+### build instructions
+
+1. run the `build.sh` script to compile buildish
+2. copy the generated binary at `build/buildish` to `/usr/bin` or something similar
+
 ### contribution info
 
 1. use 8 space indentation
