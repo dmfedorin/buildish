@@ -10,7 +10,7 @@
 
 struct proc {
         const char *name;
-        const struct ast_node *node;
+        const struct astnode *node;
 };
 
 // requires all procedure nodes to be children of the root node

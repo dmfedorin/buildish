@@ -5,16 +5,10 @@ correctly
 
 @hello
 {
-        $("echo hello");
-}
-
-@world
-{
-        $("echo world");
+        $("echo hello world");
 }
 
 @main
 {
         >(hello);
-        >(world);
 }

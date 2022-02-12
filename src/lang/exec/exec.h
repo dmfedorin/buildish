@@ -4,11 +4,12 @@
 #include "procs.h"
 
 #include "../parse.h"
+#include "../../util/debug.h"
 
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 
-void execute(const struct astnode *root);
+void exec(const struct astnode *root);
 
 #endif
