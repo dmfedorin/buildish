@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-int64_t max(int64_t a, int64_t b);
+int max(int a, int b);
 
-int64_t min(int64_t a, int64_t b);
+int min(int a, int b);
 
 #endif

@@ -9,7 +9,7 @@ void inittoks(struct arraylist *toks)
 
 void cleantoks(struct arraylist *toks)
 {
-        for (uint32_t i = 0; i < toks->size; i++) {
+        for (int i = 0; i < toks->size; i++) {
                 struct tok *tok = (struct tok *)toks->data + i;
                 free(tok->value);
         }
@@ -105,7 +105,7 @@ static inline void lexnumliteral(struct arraylist *toks, const char **curchar)
         char buf[LEXBUFSIZE];
         memset(buf, '\0', LEXBUFSIZE);
 
-        uint32_t bufind = 0;
+        int bufind = 0;
 
         while (isdigit(**curchar) || **curchar == '.') {
                 buf[bufind] = **curchar;
@@ -121,7 +121,7 @@ static inline void lexstrliteral(struct arraylist *toks, const char **curchar)
         char buf[LEXBUFSIZE];
         memset(buf, '\0', LEXBUFSIZE);
         
-        uint32_t bufind = 0;
+        int bufind = 0;
 
         // dont lex the first quote of the string
         (*curchar)++;
@@ -146,7 +146,7 @@ static inline void lexidentifier(struct arraylist *toks, const char **curchar)
         char buf[LEXBUFSIZE];
         memset(buf, '\0', LEXBUFSIZE);
         
-        uint32_t bufind = 0;
+        int bufind = 0;
 
         while (isalpha(**curchar) || **curchar == '_') {
                 buf[bufind] = **curchar;
@@ -226,7 +226,7 @@ static char tochar(enum toktype type)
 
 void printtoks(const struct arraylist *toks)
 {
-        for (uint32_t i = 0; i < toks->size; i++) {
+        for (int i = 0; i < toks->size; i++) {
                 const struct tok *tok = getalelem(toks, i);
 
                 printf("[%d] (%d, %c) - \"%s\"\n", i, tok->type,

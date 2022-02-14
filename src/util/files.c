@@ -1,6 +1,6 @@
 #include "files.h"
 
-uint64_t filesize(const char *filepath)
+int filesize(const char *filepath)
 {
         FILE *fp = fopen(filepath, "rb");
 
@@ -9,7 +9,7 @@ uint64_t filesize(const char *filepath)
 
         fseek(fp, 0, SEEK_END);
 
-        uint64_t size = ftell(fp);
+        int size = ftell(fp);
 
         fseek(fp, 0, SEEK_SET);
         fclose(fp);

@@ -29,7 +29,7 @@ static void execcmd(const struct astnode *node)
 static void execblock(const struct astnode *node,
                       const struct arraylist *procs)
 {
-        for (uint32_t i = 0; i < node->children.size; i++) {
+        for (int i = 0; i < node->children.size; i++) {
                 const struct astnode *child = getalelem(&node->children, i);
 
                 switch (child->type) {

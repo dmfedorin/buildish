@@ -1,6 +1,6 @@
 #include "arraylist.h"
 
-void inital(struct arraylist *al, uint32_t stride)
+void inital(struct arraylist *al, int stride)
 {
         al->size = 0;
         al->stride = stride;
@@ -12,7 +12,7 @@ void cleanal(struct arraylist *al)
         free(al->data);
 }
 
-const void *getalelem(const struct arraylist *al, uint32_t ind)
+const void *getalelem(const struct arraylist *al, int ind)
 {
         return al->data + al->stride * ind;
 }

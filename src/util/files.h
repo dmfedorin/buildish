@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-uint64_t filesize(const char *filepath);
+int filesize(const char *filepath);
 
 void rdfile(char *dst, const char *filepath);
 

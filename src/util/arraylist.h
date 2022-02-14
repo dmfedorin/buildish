@@ -3,20 +3,19 @@
 
 #include "util.h"
 
-#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
 struct arraylist {
         void *data;
-        uint32_t size, stride;
+        int size, stride;
 };
 
-void inital(struct arraylist *al, uint32_t stride);
+void inital(struct arraylist *al, int stride);
 
 void cleanal(struct arraylist *al);
 
-const void *getalelem(const struct arraylist *al, uint32_t ind);
+const void *getalelem(const struct arraylist *al, int ind);
 
 void addalelem(struct arraylist *al, const void *elem);
 

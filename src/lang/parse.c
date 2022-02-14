@@ -13,7 +13,7 @@ void initast(struct astnode *root)
 
 static void cleannode(struct astnode *node)
 {
-        for (uint32_t i = 0; i < node->children.size; i++) {
+        for (int i = 0; i < node->children.size; i++) {
                 struct astnode *children = node->children.data;
 
                 cleannode(&children[i]);
@@ -28,33 +28,29 @@ void cleanast(struct astnode *root)
         cleannode(root);
 }
 
-static const struct tok *prevtok(const struct arraylist *toks,
-                                 uint32_t *tokind)
+static const struct tok *prevtok(const struct arraylist *toks, int *tokind)
 {
         (*tokind)--;
         return getalelem(toks, *tokind);
 }
 
-static const struct tok *curtok(const struct arraylist *toks,
-                                uint32_t tokind)
+static const struct tok *curtok(const struct arraylist *toks, int tokind)
 {
         return getalelem(toks, tokind);
 }
 
-static const struct tok *nexttok(const struct arraylist *toks,
-                                 uint32_t *tokind)
+static const struct tok *nexttok(const struct arraylist *toks, int *tokind)
 {
         (*tokind)++;
         return getalelem(toks, *tokind);
 }
 
-static const struct tok *peektok(const struct arraylist *toks,
-                                 uint32_t tokind)
+static const struct tok *peektok(const struct arraylist *toks, int tokind)
 {
         return getalelem(toks, tokind + 1);
 }
 
-static const void expect(const struct arraylist *toks, uint32_t *tokind,
+static const void expect(const struct arraylist *toks, int *tokind,
                          enum toktype type)
 {
         if (nexttok(toks, tokind)->type != type)
@@ -95,7 +91,7 @@ static void parsecall(struct astnode *parent, const struct arraylist *toks,
 }
 
 static void parsecmd(struct astnode *parent, const struct arraylist *toks,
-                     uint32_t *tokind)
+                     int *tokind)
 {
         struct astnode *node = addchild(parent, ANT_COMMAND);
 
@@ -108,7 +104,7 @@ static void parsecmd(struct astnode *parent, const struct arraylist *toks,
 }
 
 static void parseblock(struct astnode *parent, const struct arraylist *toks,
-                       uint32_t *tokind)
+                       int *tokind)
 {
         struct astnode *node = addchild(parent, ANT_BLOCK);
 
@@ -135,7 +131,7 @@ static void parseblock(struct astnode *parent, const struct arraylist *toks,
 }
 
 static void parseproc(struct astnode *parent, const struct arraylist *toks,
-                      uint32_t *tokind)
+                      int *tokind)
 {
         struct astnode *node = addchild(parent, ANT_PROCEDURE);
 
@@ -149,7 +145,7 @@ static void parseproc(struct astnode *parent, const struct arraylist *toks,
 
 void parse(struct astnode *root, const struct arraylist *toks)
 {
-        uint32_t tokind = 0;
+        int tokind = 0;
 
         while (nexttok(toks, &tokind)->type != TT_EOF) {
                 switch (curtok(toks, tokind)->type) {
@@ -176,14 +172,14 @@ static const char *tostr(enum astnodetype type)
         }
 }
 
-static void printnode(const struct astnode *node, uint32_t depth)
+static void printnode(const struct astnode *node, int depth)
 {
-        for (uint32_t i = 0; i < depth; i++)
+        for (int i = 0; i < depth; i++)
                 printf("\t");
 
         printf("| %s [", tostr(node->type));
 
-        for (uint32_t i = 0; i < node->toks.size; i++) {
+        for (int i = 0; i < node->toks.size; i++) {
                 const struct tok *tok = getalelem(&node->toks, i);
 
                 printf("%s, ", tok->value);
@@ -191,7 +187,7 @@ static void printnode(const struct astnode *node, uint32_t depth)
 
         printf("]\n");
 
-        for (uint32_t i = 0; i < node->children.size; i++) {
+        for (int i = 0; i < node->children.size; i++) {
                 const struct astnode *child = getalelem(&node->children, i);
 
                 printnode(child, depth + 1);
