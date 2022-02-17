@@ -28,38 +28,40 @@ void cleanast(struct astnode *root)
         cleannode(root);
 }
 
-static const struct tok *prevtok(const struct arraylist *toks, int *tokind)
+static inline const struct tok *prevtok(const struct arraylist *toks,
+                                        int *tokind)
 {
         (*tokind)--;
         return getalelem(toks, *tokind);
 }
 
-static inline __attribute__ ((always_inline))
-const struct tok *curtok(const struct arraylist *toks, int tokind)
+static inline const struct tok *curtok(const struct arraylist *toks,
+                                       int tokind)
 {
         return getalelem(toks, tokind);
 }
 
-static const struct tok *nexttok(const struct arraylist *toks, int *tokind)
+static inline const struct tok *nexttok(const struct arraylist *toks,
+                                        int *tokind)
 {
         (*tokind)++;
         return getalelem(toks, *tokind);
 }
 
-static inline __attribute__ ((always_inline))
-const struct tok *peektok(const struct arraylist *toks, int tokind)
+static inline const struct tok *peektok(const struct arraylist *toks,
+                                        int tokind)
 {
         return getalelem(toks, tokind + 1);
 }
 
-static const void parseerr(const struct tok *tok, const char *msg)
+static inline const void parseerr(const struct tok *tok, const char *msg)
 {
         printf("[L:%d] ", tok->line);
         error(ERRUNEXPECTED);
 }
 
-static const void expect(const struct arraylist *toks, int *tokind,
-                         enum toktype type)
+static inline const void expect(const struct arraylist *toks, int *tokind,
+                                enum toktype type)
 {
         if (nexttok(toks, tokind)->type != type)
                 parseerr(curtok(toks, *tokind), ERRUNEXPECTED);

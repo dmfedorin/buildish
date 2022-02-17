@@ -9,7 +9,7 @@
 static struct arraylist toks;
 static struct astnode root;
 
-void clean(void)
+static inline void clean(void)
 {
         cleanast(&root);
         cleantoks(&toks);
@@ -19,7 +19,7 @@ int main(int argc, const char **argv)
 {
         atexit(clean);
         
-        printf("buildish %s\n", VERSION(1, 1, 0));
+        printf("buildish %s\n", VERSION(1, 1, 1));
 
         inittoks(&toks);
         initast(&root);

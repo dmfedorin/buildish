@@ -51,7 +51,7 @@ static enum toktype totoktype(char c)
         }
 }
 
-static inline __attribute__ ((always_inline)) bool isspecial(char c)
+static inline bool isspecial(char c)
 {
         return totoktype(c) != TT_NULL;
 }
@@ -75,7 +75,7 @@ static void addtok(struct arraylist *toks, enum toktype type,
         addalelem(toks, &tok);
 }
 
-static inline void skipcomment(const char **curchar)
+static void skipcomment(const char **curchar)
 {
         // the first backtick will end the comment if not skipped
         (*curchar)++;
@@ -90,8 +90,7 @@ static inline void skipcomment(const char **curchar)
         (*curchar)++;
 }
 
-static inline void lexspecial(struct arraylist *toks, const char **curchar,
-                              int line)
+static void lexspecial(struct arraylist *toks, const char **curchar, int line)
 {
         char buf[2] = {
                 **curchar, '\0',
@@ -102,8 +101,8 @@ static inline void lexspecial(struct arraylist *toks, const char **curchar,
         (*curchar)++;
 }
 
-static inline void lexnumliteral(struct arraylist *toks, const char **curchar,
-                                 int line)
+static void lexnumliteral(struct arraylist *toks, const char **curchar,
+                          int line)
 {
         char buf[LEXBUFSIZE];
         memset(buf, '\0', LEXBUFSIZE);
@@ -119,8 +118,8 @@ static inline void lexnumliteral(struct arraylist *toks, const char **curchar,
         addtok(toks, TT_NUMLITERAL, buf, line);
 }
 
-static inline void lexstrliteral(struct arraylist *toks, const char **curchar,
-                                 int line)
+static void lexstrliteral(struct arraylist *toks, const char **curchar,
+                          int line)
 {
         char buf[LEXBUFSIZE];
         memset(buf, '\0', LEXBUFSIZE);
@@ -145,8 +144,8 @@ static inline void lexstrliteral(struct arraylist *toks, const char **curchar,
         (*curchar)++;
 }
 
-static inline void lexidentifier(struct arraylist *toks, const char **curchar,
-                                 int line)
+static void lexidentifier(struct arraylist *toks, const char **curchar,
+                          int line)
 {
         char buf[LEXBUFSIZE];
         memset(buf, '\0', LEXBUFSIZE);

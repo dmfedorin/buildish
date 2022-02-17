@@ -17,8 +17,7 @@ const void *getalelem(const struct arraylist *al, int ind)
         return al->data + al->stride * ind;
 }
 
-static inline __attribute__ ((always_inline))
-void *lastalelem(struct arraylist *al)
+static inline void *lastalelem(struct arraylist *al)
 {
         return al->data + al->stride * max(0, al->size - 1);
 }

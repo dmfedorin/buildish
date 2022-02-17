@@ -2,17 +2,16 @@
 
 #define ERRNOMAIN "no main procedure"
 
-static void execproc(const struct astnode *node,
-                     const struct arraylist *procs);
+static inline void execproc(const struct astnode *node,
+                            const struct arraylist *procs);
 
-static inline __attribute__ ((always_inline))
-const struct tok *callnodetext(const struct astnode *node)
+static inline const struct tok *callnodetext(const struct astnode *node)
 {
         return getalelem(&node->toks, 0);
 }
 
-static void execcall(const struct astnode *node,
-                     const struct arraylist *procs)
+static inline void execcall(const struct astnode *node,
+                            const struct arraylist *procs)
 {
         const struct astnode *proc = getprocnode(procs,
                                                  callnodetext(node)->value);
@@ -20,7 +19,7 @@ static void execcall(const struct astnode *node,
         execproc(proc, procs);
 }
 
-static void execcmd(const struct astnode *node)
+static inline void execcmd(const struct astnode *node)
 {
         const struct tok *cmdtok = getalelem(&node->toks, 0);
         system(cmdtok->value);
@@ -48,14 +47,13 @@ static void execblock(const struct astnode *node,
         }
 }
 
-static inline __attribute__ ((always_inline))
-const struct astnode *procnodeblock(const struct astnode *node)
+static inline const struct astnode *procnodeblock(const struct astnode *node)
 {
         return getalelem(&node->children, 0);
 }
 
-static void execproc(const struct astnode *node,
-                     const struct arraylist *procs)
+static inline void execproc(const struct astnode *node,
+                            const struct arraylist *procs)
 {
         execblock(procnodeblock(node), procs);
 }

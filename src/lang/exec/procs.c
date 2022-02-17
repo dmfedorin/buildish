@@ -1,7 +1,6 @@
 #include "procs.h"
 
-static inline __attribute__ ((always_inline))
-const struct tok *procnodename(const struct astnode *node)
+static inline const struct tok *procnodename(const struct astnode *node)
 {
         return getalelem(&node->toks, 0);
 }
