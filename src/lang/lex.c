@@ -57,11 +57,12 @@ static inline __attribute__ ((always_inline)) bool isspecial(char c)
 }
 
 static void addtok(struct arraylist *toks, enum toktype type,
-                   const char *value)
+                   const char *value, int line)
 {
         struct tok tok = {
                 .type = type,
-                .value = malloc(strlen(value) + 1)
+                .value = malloc(strlen(value) + 1),
+                .line = line,
         };
 
         /*
@@ -89,18 +90,20 @@ static inline void skipcomment(const char **curchar)
         (*curchar)++;
 }
 
-static inline void lexspecial(struct arraylist *toks, const char **curchar)
+static inline void lexspecial(struct arraylist *toks, const char **curchar,
+                              int line)
 {
         char buf[2] = {
                 **curchar, '\0',
         };
 
-        addtok(toks, totoktype(**curchar), buf);
+        addtok(toks, totoktype(**curchar), buf, line);
 
         (*curchar)++;
 }
 
-static inline void lexnumliteral(struct arraylist *toks, const char **curchar)
+static inline void lexnumliteral(struct arraylist *toks, const char **curchar,
+                                 int line)
 {
         char buf[LEXBUFSIZE];
         memset(buf, '\0', LEXBUFSIZE);
@@ -113,10 +116,11 @@ static inline void lexnumliteral(struct arraylist *toks, const char **curchar)
                 (*curchar)++;
         }
 
-        addtok(toks, TT_NUMLITERAL, buf);
+        addtok(toks, TT_NUMLITERAL, buf, line);
 }
 
-static inline void lexstrliteral(struct arraylist *toks, const char **curchar)
+static inline void lexstrliteral(struct arraylist *toks, const char **curchar,
+                                 int line)
 {
         char buf[LEXBUFSIZE];
         memset(buf, '\0', LEXBUFSIZE);
@@ -132,7 +136,7 @@ static inline void lexstrliteral(struct arraylist *toks, const char **curchar)
                 (*curchar)++;
         }
         
-        addtok(toks, TT_STRLITERAL, buf);
+        addtok(toks, TT_STRLITERAL, buf, line);
 
         /*
         skip past last quote or else lex will immediately try to create
@@ -141,45 +145,50 @@ static inline void lexstrliteral(struct arraylist *toks, const char **curchar)
         (*curchar)++;
 }
 
-static inline void lexidentifier(struct arraylist *toks, const char **curchar)
+static inline void lexidentifier(struct arraylist *toks, const char **curchar,
+                                 int line)
 {
         char buf[LEXBUFSIZE];
         memset(buf, '\0', LEXBUFSIZE);
         
         int bufind = 0;
 
-        while (isalpha(**curchar) || **curchar == '_') {
+        while (isalpha(**curchar) || **curchar == '_' || isdigit(**curchar)) {
                 buf[bufind] = **curchar;
                 bufind++;
                 (*curchar)++;
         }
 
-        addtok(toks, TT_IDENTIFIER, buf);
+        addtok(toks, TT_IDENTIFIER, buf, line);
 }
 
 // src needs to be null terminated
 void lex(struct arraylist *toks, const char *src)
 {
-        addtok(toks, TT_SOF, "SOF");
+        addtok(toks, TT_SOF, "SOF", -1);
         
         const char *curchar = src;
+        int line = 1;
 
         while (*curchar != '\0') {
+                if (*curchar == '\n')
+                        line++;
+                        
                 if (*curchar == '`')
                         skipcomment(&curchar);
                 else if (isspecial(*curchar))
-                        lexspecial(toks, &curchar);
+                        lexspecial(toks, &curchar, line);
                 else if (isdigit(*curchar))
-                        lexnumliteral(toks, &curchar);
+                        lexnumliteral(toks, &curchar, line);
                 else if (*curchar == '"')
-                        lexstrliteral(toks, &curchar);
+                        lexstrliteral(toks, &curchar, line);
                 else if (isalpha(*curchar) || *curchar == '_')
-                        lexidentifier(toks, &curchar);
+                        lexidentifier(toks, &curchar, line);
                 else
                         curchar++;
         }
 
-        addtok(toks, TT_EOF, "EOF");
+        addtok(toks, TT_EOF, "EOF", -1);
 }
 
 static char tochar(enum toktype type)

@@ -1,6 +1,8 @@
 #ifndef FILES_H_INCLUDED
 #define FILES_H_INCLUDED
 
+#include "debug.h"
+
 #include <stdint.h>
 #include <stdio.h>
 

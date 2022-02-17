@@ -1,11 +1,13 @@
 #include "files.h"
 
+#define ERRNOFILE "attempting to open nonexistant file"
+
 int filesize(const char *filepath)
 {
         FILE *fp = fopen(filepath, "rb");
 
         if (fp == NULL)
-                perror("file error: ");
+                error(ERRNOFILE);
 
         fseek(fp, 0, SEEK_END);
 
@@ -22,7 +24,7 @@ void rdfile(char *dst, const char *filepath)
         FILE *fp = fopen(filepath, "rb");
         
         if (fp == NULL)
-                perror("file error: ");
+                error(ERRNOFILE);
 
         fread(dst, 1, filesize(filepath), fp);
         fclose(fp);

@@ -15,11 +15,11 @@ void clean(void)
         cleantoks(&toks);
 }
 
-int main(void)
+int main(int argc, const char **argv)
 {
         atexit(clean);
-
-        printf("buildish %s\n", VERSION(1, 0, 0));
+        
+        printf("buildish %s\n", VERSION(1, 1, 0));
 
         inittoks(&toks);
         initast(&root);

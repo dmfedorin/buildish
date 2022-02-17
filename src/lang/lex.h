@@ -49,6 +49,7 @@ enum toktype {
 struct tok {
         enum toktype type;
         char *value;
+        int line;
 };
 
 void inittoks(struct arraylist *toks);

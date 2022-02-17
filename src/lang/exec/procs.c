@@ -17,7 +17,7 @@ void findprocs(struct arraylist *procs, const struct astnode *root)
 
                 struct proc proc = {
                         .name = procnodename(node)->value,
-                        .node = node
+                        .node = node,
                 };
 
                 addalelem(procs, &proc);

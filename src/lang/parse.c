@@ -34,7 +34,8 @@ static const struct tok *prevtok(const struct arraylist *toks, int *tokind)
         return getalelem(toks, *tokind);
 }
 
-static const struct tok *curtok(const struct arraylist *toks, int tokind)
+static inline __attribute__ ((always_inline))
+const struct tok *curtok(const struct arraylist *toks, int tokind)
 {
         return getalelem(toks, tokind);
 }
@@ -45,22 +46,29 @@ static const struct tok *nexttok(const struct arraylist *toks, int *tokind)
         return getalelem(toks, *tokind);
 }
 
-static const struct tok *peektok(const struct arraylist *toks, int tokind)
+static inline __attribute__ ((always_inline))
+const struct tok *peektok(const struct arraylist *toks, int tokind)
 {
         return getalelem(toks, tokind + 1);
+}
+
+static const void parseerr(const struct tok *tok, const char *msg)
+{
+        printf("[L:%d] ", tok->line);
+        error(ERRUNEXPECTED);
 }
 
 static const void expect(const struct arraylist *toks, int *tokind,
                          enum toktype type)
 {
         if (nexttok(toks, tokind)->type != type)
-                error(ERRUNEXPECTED);
+                parseerr(curtok(toks, *tokind), ERRUNEXPECTED);
 }
 
 static struct astnode *addchild(struct astnode *parent, enum astnodetype type)
 {
         struct astnode child = {
-                .type = type
+                .type = type,
         };
 
         inital(&child.toks, sizeof(struct tok));
@@ -123,7 +131,7 @@ static void parseblock(struct astnode *parent, const struct arraylist *toks,
                         break;
 
                 default:
-                        error(ERRUNHANDLED);
+                        parseerr(curtok(toks, *tokind), ERRUNHANDLED);
                 }
 
                 expect(toks, tokind, TT_SEMICOLON);
@@ -154,7 +162,7 @@ void parse(struct astnode *root, const struct arraylist *toks)
                         break;
 
                 default:
-                        error(ERRUNHANDLED);
+                        parseerr(curtok(toks, tokind), ERRUNHANDLED);
                 }
         }
 }
