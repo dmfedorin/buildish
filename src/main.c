@@ -19,7 +19,7 @@ int main(int argc, const char **argv)
 {
         atexit(clean);
         
-        printf("buildish %s\n", VERSION(1, 1, 1));
+        printf("buildish %s\n", VERSION(1, 1, 2));
 
         inittoks(&toks);
         initast(&root);

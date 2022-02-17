@@ -28,6 +28,8 @@ enum toktype {
         TT_PLUS,        // +
         TT_SEMICOLON,   // ;
         TT_COLON,       // :
+        TT_COMMA,       // ,
+        TT_PERIOD,      // .
         TT_PIPE,        // |
         TT_SLASH,       // /
         TT_QUESTION,    // ?

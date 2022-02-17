@@ -34,6 +34,8 @@ static enum toktype totoktype(char c)
         case '+': return TT_PLUS;
         case ';': return TT_SEMICOLON;
         case ':': return TT_COLON;
+        case ',': return TT_COMMA;
+        case '.': return TT_PERIOD;
         case '|': return TT_PIPE;
         case '/': return TT_SLASH;
         case '?': return TT_QUESTION;
@@ -211,6 +213,8 @@ static char tochar(enum toktype type)
         case TT_PLUS:        return '+';
         case TT_SEMICOLON:   return ';';
         case TT_COLON:       return ':';
+        case TT_COMMA:       return ',';
+        case TT_PERIOD:      return '.';
         case TT_PIPE:        return '|';
         case TT_SLASH:       return '/';
         case TT_QUESTION:    return '?';
