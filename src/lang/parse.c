@@ -87,8 +87,21 @@ void addtok(struct astnode *node, const struct tok *tok)
         addalelem(&node->toks, tok);
 }
 
+static void parselog(struct astnode *parent, const struct arraylist *toks,
+                     int *tokind)
+{
+        struct astnode *node = addchild(parent, ANT_LOG);
+
+        expect(toks, tokind, TT_LPAREN);
+        expect(toks, tokind, TT_STRLITERAL);
+
+        addtok(node, curtok(toks, *tokind));
+
+        expect(toks, tokind, TT_RPAREN);
+}
+
 static void parsecall(struct astnode *parent, const struct arraylist *toks,
-                      uint32_t *tokind)
+                      int *tokind)
 {
         struct astnode *node = addchild(parent, ANT_CALL);
 
@@ -130,6 +143,10 @@ static void parseblock(struct astnode *parent, const struct arraylist *toks,
 
                 case TT_RANGLE:
                         parsecall(node, toks, tokind);
+                        break;
+
+                case TT_EXCLAMATION:
+                        parselog(node, toks, tokind);
                         break;
 
                 default:
@@ -177,6 +194,7 @@ static const char *tostr(enum astnodetype type)
         case ANT_BLOCK:     return "block";
         case ANT_COMMAND:   return "command";
         case ANT_CALL:      return "call";
+        case ANT_LOG:       return "log";
 
         default: return "unknown";
         }

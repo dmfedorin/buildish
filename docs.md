@@ -18,16 +18,22 @@ will have the system command line execute the string contained within the parent
 ```
 >(procname);
 ```
-will do the equivalent of calling a function in a programming language. in this case, it will call the procedure called `procname`. you now know everything needed to create a buildish script. here is an example of one:
+will do the equivalent of calling a function in a programming language. in this case, it will call the procedure called `procname`. the log instruction:
+```
+!("this is a log message");
+```
+will write a message to the standard output. you now know everything needed to create a buildish script. here is an example of one:
 ```
 @build
 {
     $("gcc -o main *.c");
+    !("build complete");
 }
 
 @run
 {
     $("./main");
+    !("finished running");
 }
 
 @main
@@ -41,8 +47,8 @@ indeed, buildish uses a `main` procedure as the entry point for a build script, 
 `this is a comment, as it is in backticks`
 @main
 {
-    $("echo this, however, is not a comment");
-    $("and neither is this");
+    !("this, however, is not a comment");
+    !("and neither is this");
 }
 ```
 

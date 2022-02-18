@@ -25,6 +25,7 @@ enum astnodetype {
         ANT_BLOCK,
         ANT_COMMAND,
         ANT_CALL,
+        ANT_LOG,
 };
 
 struct astnode {
