@@ -12,9 +12,9 @@ buildish scripts are divided into procedures, which are defined as follows:
 ```
 every procedure has a name (identified by the `@` prefix) and a body, which must immediately follow the name. buildish procedures are similar to routines or functions in programming languages, the body contains instructions which are sequentially executed. as for the instructions, the command instruction:
 ```
-$("echo hello world");
+$("gcc -o main main.c");
 ```
-will have the system command line execute the string contained within the parentheses as a command, so the given command will output "hello world" to standard output. the call instruction:
+will have the system command line execute the string contained within the parentheses as a command, so the given command will use gcc to compile a C file. the call instruction:
 ```
 >(procname);
 ```
