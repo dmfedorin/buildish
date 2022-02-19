@@ -1,4 +1,4 @@
-# buildish-tool
+# buildish
 
 a build tool with curly brace and semicolon syntax.
 
