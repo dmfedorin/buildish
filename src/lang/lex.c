@@ -17,7 +17,7 @@ void cleantoks(struct arraylist *toks)
         cleanal(toks);
 }
 
-static enum toktype totoktype(char c)
+static enum toktype chartott(char c)
 {
         switch (c) {
         case '~': return TT_TILDE;
@@ -55,15 +55,14 @@ static enum toktype totoktype(char c)
 
 static inline bool isspecial(char c)
 {
-        return totoktype(c) != TT_NULL;
+        return chartott(c) != TT_NULL;
 }
 
 static void addtok(struct arraylist *toks, enum toktype type,
                    const char *value, int line)
 {
         struct tok tok = {
-                .type = type,
-                .value = malloc(strlen(value) + 1),
+                .type = type, .value = malloc(strlen(value) + 1),
                 .line = line,
         };
 
@@ -98,7 +97,7 @@ static void lexspecial(struct arraylist *toks, const char **curchar, int line)
                 **curchar, '\0',
         };
 
-        addtok(toks, totoktype(**curchar), buf, line);
+        addtok(toks, chartott(**curchar), buf, line);
 
         (*curchar)++;
 }
@@ -192,7 +191,7 @@ void lex(struct arraylist *toks, const char *src)
         addtok(toks, TT_EOF, "EOF", -1);
 }
 
-static char tochar(enum toktype type)
+static char tttochar(enum toktype type)
 {
         switch (type) {
         case TT_NULL: return 'N';
@@ -242,6 +241,6 @@ void printtoks(const struct arraylist *toks)
                 const struct tok *tok = getalelem(toks, i);
 
                 printf("[%d] (%d, %c) - \"%s\"\n", i, tok->type,
-                       tochar(tok->type), tok->value);
+                       tttochar(tok->type), tok->value);
         }
 }

@@ -1,22 +1,18 @@
 #include "procs.h"
 
-static inline const struct tok *procnodename(const struct astnode *node)
-{
-        return getalelem(&node->toks, 0);
-}
-
 // requires all procedure nodes to be children of the root node
 void findprocs(struct arraylist *procs, const struct astnode *root)
 {
         for (int i = 0; i < root->children.size; i++) {
                 const struct astnode *node = getalelem(&root->children, i);
 
-                if (node->type != ANT_PROCEDURE)
+                if (node->type != ANT_PROC)
                         continue;
 
+                const struct tok *name = getalelem(&node->toks, 0);
+
                 struct proc proc = {
-                        .name = procnodename(node)->value,
-                        .node = node,
+                        .name = name->value, .node = node,
                 };
 
                 addalelem(procs, &proc);

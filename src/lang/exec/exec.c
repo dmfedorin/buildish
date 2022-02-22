@@ -1,6 +1,8 @@
 #include "exec.h"
 
-#define ERRNOMAIN "no main procedure"
+#define ERRNOMAIN     "no main procedure"
+#define ERRINVALIDDIR "invalid directory"
+#define FMTBUFSIZE    1024
 
 static inline void execlog(const struct astnode *node)
 {
@@ -26,6 +28,35 @@ static inline void execcmd(const struct astnode *node)
         system(cmd->value);
 }
 
+static inline void execallcmd(const struct astnode *node)
+{
+        const struct tok *dir = getalelem(&node->toks, 0);
+        const struct tok *cmd = getalelem(&node->toks, 1);
+
+        DIR *d = opendir(dir->value);
+
+        if (d == NULL)
+                error(ERRINVALIDDIR);
+
+        const struct dirent *ent = readdir(d);
+
+        while (ent != NULL) {
+                if (ent->d_type != DT_REG) {
+                        ent = readdir(d);
+                        continue;
+                }
+
+                char fmtbuf[FMTBUFSIZE] = { 0 };
+                fmtreplace(fmtbuf, cmd->value, ent->d_name);
+
+                system(fmtbuf);
+
+                ent = readdir(d);
+        }
+
+        closedir(d);
+}
+
 static void execblock(const struct astnode *node,
                       const struct arraylist *procs)
 {
@@ -37,7 +68,11 @@ static void execblock(const struct astnode *node,
                         execblock(child, procs);
                         break;
 
-                case ANT_COMMAND:
+                case ANT_ALLCMD:
+                        execallcmd(child);
+                        break;
+
+                case ANT_CMD:
                         execcmd(child);
                         break;
 

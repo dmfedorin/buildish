@@ -4,8 +4,8 @@
 #include "util/files.h"
 #include "term/opts.h"
 
-#define FILEPATH                     "buildishprocs"
-#define VERSION(major, minor, patch) #major "." #minor "." #patch
+#define FILEPATH               "buildishprocs"
+#define VERSION(maj, min, pat) #maj "." #min "." #pat
 
 static struct arraylist toks, opts;
 static struct astnode root;

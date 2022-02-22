@@ -21,9 +21,10 @@ in parse.c, define the functions for parsing node types in the reverse order
 
 enum astnodetype {
         ANT_ROOT,
-        ANT_PROCEDURE,
+        ANT_PROC,
         ANT_BLOCK,
-        ANT_COMMAND,
+        ANT_ALLCMD,
+        ANT_CMD,
         ANT_CALL,
         ANT_LOG,
 };

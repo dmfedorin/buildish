@@ -5,6 +5,9 @@
 
 #include "../parse.h"
 #include "../../util/debug.h"
+#include "../../util/fmt.h"
+
+#include <dirent.h>
 
 #include <stdlib.h>
 #include <stdint.h>

@@ -15,7 +15,6 @@ static void cleannode(struct astnode *node)
 {
         for (int i = 0; i < node->children.size; i++) {
                 struct astnode *children = node->children.data;
-
                 cleannode(&children[i]);
         }
 
@@ -116,11 +115,31 @@ static void parsecall(struct astnode *parent, const struct arraylist *toks,
 static void parsecmd(struct astnode *parent, const struct arraylist *toks,
                      int *tokind)
 {
-        struct astnode *node = addchild(parent, ANT_COMMAND);
+        struct astnode *node = addchild(parent, ANT_CMD);
 
         expect(toks, tokind, TT_LPAREN);
         expect(toks, tokind, TT_STRLITERAL);
 
+        addtok(node, curtok(toks, *tokind));
+        
+        expect(toks, tokind, TT_RPAREN);
+}
+
+static void parseallcmd(struct astnode *parent, const struct arraylist *toks,
+                        int *tokind)
+{
+        struct astnode *node = addchild(parent, ANT_ALLCMD);
+
+        expect(toks, tokind, TT_LPAREN);
+        expect(toks, tokind, TT_STRLITERAL);
+        
+        // directory
+        addtok(node, curtok(toks, *tokind));
+        
+        expect(toks, tokind, TT_COMMA);
+        expect(toks, tokind, TT_STRLITERAL);
+        
+        // command
         addtok(node, curtok(toks, *tokind));
         
         expect(toks, tokind, TT_RPAREN);
@@ -135,6 +154,10 @@ static void parseblock(struct astnode *parent, const struct arraylist *toks,
                 switch (curtok(toks, *tokind)->type) {
                 case TT_LBRACE:
                         parseblock(node, toks, tokind);
+                        break;
+
+                case TT_PERCENTAGE:
+                        parseallcmd(node, toks, tokind);
                         break;
 
                 case TT_DOLLAR:
@@ -160,7 +183,7 @@ static void parseblock(struct astnode *parent, const struct arraylist *toks,
 static void parseproc(struct astnode *parent, const struct arraylist *toks,
                       int *tokind)
 {
-        struct astnode *node = addchild(parent, ANT_PROCEDURE);
+        struct astnode *node = addchild(parent, ANT_PROC);
 
         expect(toks, tokind, TT_IDENTIFIER);
 
@@ -186,15 +209,16 @@ void parse(struct astnode *root, const struct arraylist *toks)
         }
 }
 
-static const char *tostr(enum astnodetype type)
+static const char *anttostr(enum astnodetype type)
 {
         switch (type) {
-        case ANT_ROOT:      return "root";
-        case ANT_PROCEDURE: return "procedure";
-        case ANT_BLOCK:     return "block";
-        case ANT_COMMAND:   return "command";
-        case ANT_CALL:      return "call";
-        case ANT_LOG:       return "log";
+        case ANT_ROOT:   return "root";
+        case ANT_PROC:   return "procedure";
+        case ANT_BLOCK:  return "block";
+        case ANT_ALLCMD: return "allcommand";
+        case ANT_CMD:    return "command";
+        case ANT_CALL:   return "call";
+        case ANT_LOG:    return "log";
 
         default: return "unknown";
         }
@@ -205,11 +229,10 @@ static void printnode(const struct astnode *node, int depth)
         for (int i = 0; i < depth; i++)
                 printf("\t");
 
-        printf("| %s [", tostr(node->type));
+        printf("| %s [", anttostr(node->type));
 
         for (int i = 0; i < node->toks.size; i++) {
                 const struct tok *tok = getalelem(&node->toks, i);
-
                 printf("%s, ", tok->value);
         }
 
@@ -217,7 +240,6 @@ static void printnode(const struct astnode *node, int depth)
 
         for (int i = 0; i < node->children.size; i++) {
                 const struct astnode *child = getalelem(&node->children, i);
-
                 printnode(child, depth + 1);
         }
 }
