@@ -28,7 +28,7 @@ static inline void execcmd(const struct astnode *node)
         system(cmd->value);
 }
 
-static inline void execallcmd(const struct astnode *node)
+static void execallcmd(const struct astnode *node)
 {
         const struct tok *dir = getalelem(&node->toks, 0);
         const struct tok *cmd = getalelem(&node->toks, 1);

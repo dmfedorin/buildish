@@ -22,11 +22,30 @@ will do the equivalent of calling a function in a programming language. in this 
 ```
 !("this is a log message");
 ```
-will write a message to the standard output. you now know everything needed to create a buildish script. here is an example of one:
+will write a message to the standard output. the allcommand instruction:
 ```
+%("some/dir", "echo %");
+```
+will loop over all files in a directory and run a command on each one. the first argument within the parentheses, `some/dir`, is the directory. the second argument is the command. any percentage signs in the command will be replaced with the name of the file in the current loop iteration. this means that the above example will output the name of every file in `some/dir`. you now know everything needed to create a buildish script. here is an example of one:
+```
+@compile
+{
+    `compiles each object file individually to show allcommand`
+    %("src", "gcc -o imed/%.o -c src/%");
+    !("compiled object files");
+}
+
+@link
+{
+    `the finished binary will be at build/main`
+    $("ld -o build/main imed/*.o");
+    !("finished linking");
+}
+
 @build
 {
-    $("gcc -o main *.c");
+    >(compile);
+    >(link);
     !("build complete");
 }
 

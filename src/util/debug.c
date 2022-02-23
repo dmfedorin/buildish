@@ -2,16 +2,16 @@
 
 void loginfo(const char *msg)
 {
-        printf("LOG: \"%s\"\n", msg);
+        printf("log: %s\n", msg);
 }
 
 void warning(const char *msg)
 {
-        printf("WARNING: \"%s\"", msg);
+        printf("warn: %s\n", msg);
 }
 
 void error(const char *msg)
 {
-        printf("ERROR: \"%s\"\n", msg);
+        printf("err: %s\n", msg);
         exit(-1);
 }
