@@ -21,7 +21,7 @@ int main(int argc, const char **argv)
 {
         atexit(clean);
         
-        printf("buildish %s\n", VERSION(1, 2, 0));
+        printf("buildish %s\n", VERSION(1, 3, 0));
 
         initopts(&opts);
         getopts(&opts, argc, argv);
