@@ -81,48 +81,53 @@ static struct astnode *addchild(struct astnode *parent, enum astnodetype type)
         return &children[parent->children.size - 1];
 }
 
-void addtok(struct astnode *node, const struct tok *tok)
+static void addtok(struct astnode *node, const struct tok *tok)
 {
         addalelem(&node->toks, tok);
+}
+
+// extracts every meaningful token between parentheses onto a node
+static void extractparentoks(struct astnode *node,
+                             const struct arraylist *toks, int *tokind)
+{
+        while (nexttok(toks, tokind)->type != TT_RPAREN) {
+                switch (curtok(toks, *tokind)->type) {
+                case TT_IDENTIFIER:
+                case TT_STRLITERAL:
+                case TT_NUMLITERAL:
+                        addtok(node, curtok(toks, *tokind));
+                        break;
+                
+                default:
+                        parseerr(curtok(toks, *tokind), ERRUNHANDLED);
+                }
+
+                expect(toks, tokind, TT_COMMA);
+        }
 }
 
 static void parselog(struct astnode *parent, const struct arraylist *toks,
                      int *tokind)
 {
         struct astnode *node = addchild(parent, ANT_LOG);
-
         expect(toks, tokind, TT_LPAREN);
-        expect(toks, tokind, TT_STRLITERAL);
-
-        addtok(node, curtok(toks, *tokind));
-
-        expect(toks, tokind, TT_RPAREN);
+        extractparentoks(node, toks, tokind);
 }
 
 static void parsecall(struct astnode *parent, const struct arraylist *toks,
                       int *tokind)
 {
         struct astnode *node = addchild(parent, ANT_CALL);
-
         expect(toks, tokind, TT_LPAREN);
-        expect(toks, tokind, TT_IDENTIFIER);
-
-        addtok(node, curtok(toks, *tokind));
-
-        expect(toks, tokind, TT_RPAREN);
+        extractparentoks(node, toks, tokind);
 }
 
 static void parsecmd(struct astnode *parent, const struct arraylist *toks,
                      int *tokind)
 {
         struct astnode *node = addchild(parent, ANT_CMD);
-
         expect(toks, tokind, TT_LPAREN);
-        expect(toks, tokind, TT_STRLITERAL);
-
-        addtok(node, curtok(toks, *tokind));
-        
-        expect(toks, tokind, TT_RPAREN);
+        extractparentoks(node, toks, tokind);
 }
 
 static void parseallcmd(struct astnode *parent, const struct arraylist *toks,
@@ -134,6 +139,12 @@ static void parseallcmd(struct astnode *parent, const struct arraylist *toks,
         expect(toks, tokind, TT_STRLITERAL);
         
         // directory
+        addtok(node, curtok(toks, *tokind));
+        
+        expect(toks, tokind, TT_COMMA);
+        expect(toks, tokind, TT_STRLITERAL);
+        
+        // file extension
         addtok(node, curtok(toks, *tokind));
         
         expect(toks, tokind, TT_COMMA);
