@@ -34,6 +34,10 @@ struct astnode {
         struct arraylist toks, children;
 };
 
+const struct astnode *getchild(const struct astnode *node, int ind);
+
+const struct tok *gettok(const struct astnode *node, int ind);
+
 void initast(struct astnode *root);
 
 void cleanast(struct astnode *root);

@@ -3,6 +3,16 @@
 #define ERRUNEXPECTED "unexpected token"
 #define ERRUNHANDLED  "unhandled token encountered"
 
+const struct astnode *getchild(const struct astnode *node, int ind)
+{
+        return getalelem(&node->children, ind);
+}
+
+const struct tok *gettok(const struct astnode *node, int ind)
+{
+        return getalelem(&node->toks, ind);
+}
+
 void initast(struct astnode *root)
 {
         root->type = ANT_ROOT;
@@ -81,7 +91,7 @@ static struct astnode *addchild(struct astnode *parent, enum astnodetype type)
         return &children[parent->children.size - 1];
 }
 
-static void addtok(struct astnode *node, const struct tok *tok)
+static inline void addtok(struct astnode *node, const struct tok *tok)
 {
         addalelem(&node->toks, tok);
 }
@@ -102,28 +112,33 @@ static void extractparentoks(struct astnode *node,
                         parseerr(curtok(toks, *tokind), ERRUNHANDLED);
                 }
 
-                expect(toks, tokind, TT_COMMA);
+                /*
+                unconditionally expecting will force an unnecessary comma to
+                be required after the last token
+                */
+                if (peektok(toks, *tokind)->type != TT_RPAREN)
+                        expect(toks, tokind, TT_COMMA);
         }
 }
 
-static void parselog(struct astnode *parent, const struct arraylist *toks,
-                     int *tokind)
+static inline void parselog(struct astnode *parent,
+                            const struct arraylist *toks, int *tokind)
 {
         struct astnode *node = addchild(parent, ANT_LOG);
         expect(toks, tokind, TT_LPAREN);
         extractparentoks(node, toks, tokind);
 }
 
-static void parsecall(struct astnode *parent, const struct arraylist *toks,
-                      int *tokind)
+static inline void parsecall(struct astnode *parent,
+                             const struct arraylist *toks, int *tokind)
 {
         struct astnode *node = addchild(parent, ANT_CALL);
         expect(toks, tokind, TT_LPAREN);
         extractparentoks(node, toks, tokind);
 }
 
-static void parsecmd(struct astnode *parent, const struct arraylist *toks,
-                     int *tokind)
+static inline void parsecmd(struct astnode *parent,
+                            const struct arraylist *toks, int *tokind)
 {
         struct astnode *node = addchild(parent, ANT_CMD);
         expect(toks, tokind, TT_LPAREN);
@@ -243,14 +258,14 @@ static void printnode(const struct astnode *node, int depth)
         printf("| %s [", anttostr(node->type));
 
         for (int i = 0; i < node->toks.size; i++) {
-                const struct tok *tok = getalelem(&node->toks, i);
+                const struct tok *tok = gettok(node, i);
                 printf("%s, ", tok->value);
         }
 
         printf("]\n");
 
         for (int i = 0; i < node->children.size; i++) {
-                const struct astnode *child = getalelem(&node->children, i);
+                const struct astnode *child = getchild(node, i);
                 printnode(child, depth + 1);
         }
 }

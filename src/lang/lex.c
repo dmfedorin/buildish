@@ -105,9 +105,7 @@ static void lexspecial(struct arraylist *toks, const char **curchar, int line)
 static void lexnumliteral(struct arraylist *toks, const char **curchar,
                           int line)
 {
-        char buf[LEXBUFSIZE];
-        memset(buf, '\0', LEXBUFSIZE);
-
+        char buf[LEXBUFSIZE] = { 0 };
         int bufind = 0;
 
         while (isdigit(**curchar) || **curchar == '.') {
@@ -122,9 +120,7 @@ static void lexnumliteral(struct arraylist *toks, const char **curchar,
 static void lexstrliteral(struct arraylist *toks, const char **curchar,
                           int line)
 {
-        char buf[LEXBUFSIZE];
-        memset(buf, '\0', LEXBUFSIZE);
-        
+        char buf[LEXBUFSIZE] = { 0 };
         int bufind = 0;
 
         // dont lex the first quote of the string
@@ -148,9 +144,7 @@ static void lexstrliteral(struct arraylist *toks, const char **curchar,
 static void lexidentifier(struct arraylist *toks, const char **curchar,
                           int line)
 {
-        char buf[LEXBUFSIZE];
-        memset(buf, '\0', LEXBUFSIZE);
-        
+        char buf[LEXBUFSIZE] = { 0 };
         int bufind = 0;
 
         while (isalpha(**curchar) || **curchar == '_' || isdigit(**curchar)) {

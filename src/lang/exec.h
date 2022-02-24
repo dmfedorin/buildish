@@ -6,6 +6,7 @@
 #include "../util/debug.h"
 #include "../util/arraylist.h"
 #include "../util/fmt.h"
+#include "../util/files.h"
 
 #include <dirent.h>
 

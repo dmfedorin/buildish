@@ -29,3 +29,13 @@ void rdfile(char *dst, const char *filepath)
         fread(dst, 1, filesize(filepath), fp);
         fclose(fp);
 }
+
+const char *fileext(const char *filename)
+{
+        const char *c = filename;
+
+        while (*c != '.' && *c != '\0')
+                c++;
+
+        return c;
+}

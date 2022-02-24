@@ -1,6 +1,6 @@
 #include "lang/lex.h"
 #include "lang/parse.h"
-#include "lang/exec/exec.h"
+#include "lang/exec.h"
 #include "util/files.h"
 #include "term/opts.h"
 
@@ -21,7 +21,7 @@ int main(int argc, const char **argv)
 {
         atexit(clean);
         
-        printf("buildish %s\n", VERSION(1, 3, 0));
+        printf("buildish %s\n", VERSION(1, 3, 1));
 
         initopts(&opts);
         getopts(&opts, argc, argv);
@@ -35,10 +35,11 @@ int main(int argc, const char **argv)
         lex(&toks, src);
         parse(&root, &toks);
 
-        if (optscont(&opts, "-debug")) {
+        if (optscont(&opts, "-dtoks"))
                 printtoks(&toks);
+        
+        if (optscont(&opts, "-dast"))
                 printast(&root);
-        }
 
         exec(&root);
 
