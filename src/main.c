@@ -7,21 +7,23 @@
 #define FILEPATH               "buildishprocs"
 #define VERSION(maj, min, pat) #maj "." #min "." #pat
 
+static char *src;
 static struct arraylist toks, opts;
 static struct astnode root;
 
-static inline void clean(void)
+static void clean(void)
 {
         cleanast(&root);
         cleantoks(&toks);
         cleanopts(&opts);
+        free(src);
 }
 
-int main(int argc, const char **argv)
+int main(int argc, const char *argv[])
 {
         atexit(clean);
         
-        printf("buildish %s\n", VERSION(1, 3, 1));
+        printf("buildish %s\n", VERSION(1, 3, 2));
 
         initopts(&opts);
         getopts(&opts, argc, argv);
@@ -29,7 +31,7 @@ int main(int argc, const char **argv)
         inittoks(&toks);
         initast(&root);
 
-        char *src = malloc(filesize(FILEPATH));
+        src = malloc(filesize(FILEPATH));
         rdfile(src, FILEPATH);
 
         lex(&toks, src);

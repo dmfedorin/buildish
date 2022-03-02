@@ -10,7 +10,7 @@ void cleanopts(struct arraylist *opts)
         cleanal(opts);
 }
 
-void getopts(struct arraylist *opts, int argc, const char **argv)
+void getopts(struct arraylist *opts, int argc, const char *argv[])
 {
         for (int i = 1; i < argc; i++)
                 addalelem(opts, argv[i]);
