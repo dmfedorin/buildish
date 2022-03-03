@@ -13,4 +13,4 @@ buildish is a build tool with curly brace and semicolon syntax.
 2. use K&R brace style.
 3. avoid typedef unless necessary (e.g. opaque types).
 4. do not reach 80 characters on one line.
-5. if possible, inline functions which are 3 sloc long or less.
+5. if possible, inline functions which are 3 significant lines of code long or less.

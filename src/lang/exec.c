@@ -54,7 +54,7 @@ static void callproc(const struct arraylist *procs, const char *name)
         execblock(block, procs);
 }
 
-static void execlog(const struct astnode *node)
+static inline void execlog(const struct astnode *node)
 {
         for (int i = 0; i < node->toks.size; i++) {
                 const struct tok *msg = gettok(node, i);
@@ -62,7 +62,7 @@ static void execlog(const struct astnode *node)
         }
 }
 
-static void execcall(const struct astnode *node,
+static inline void execcall(const struct astnode *node,
                      const struct arraylist *procs)
 {
         for (int i = 0; i < node->toks.size; i++) {
@@ -71,7 +71,7 @@ static void execcall(const struct astnode *node,
         }
 }
 
-static void execcmd(const struct astnode *node)
+static inline void execcmd(const struct astnode *node)
 {
         for (int i = 0; i < node->toks.size; i++) {
                 const struct tok *cmd = gettok(node, i);
