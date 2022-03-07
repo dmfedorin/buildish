@@ -1,10 +1,5 @@
-#ifndef ARRAYLIST_H_INCLUDED
-#define ARRAYLIST_H_INCLUDED
-
-#include "util.h"
-
-#include <stdlib.h>
-#include <string.h>
+#ifndef ARRAYLISTH_1657652
+#define ARRAYLISTH_1657652
 
 struct arraylist {
         void *data;

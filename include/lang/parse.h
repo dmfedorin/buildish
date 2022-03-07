@@ -1,11 +1,8 @@
-#ifndef PARSE_H_INCLUDED
-#define PARSE_H_INCLUDED
+#ifndef PARSEH_165904
+#define PARSEH_165904
 
-#include "lex.h"
-
-#include "../util/util.h"
-#include "../util/debug.h"
-#include "../util/arraylist.h"
+#include "util/arraylist.h"
+#include "lang/lex.h"
 
 /*
 add node types by order of how they use eachother

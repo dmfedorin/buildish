@@ -1,10 +1,5 @@
-#ifndef FILES_H_INCLUDED
-#define FILES_H_INCLUDED
-
-#include "debug.h"
-
-#include <stdint.h>
-#include <stdio.h>
+#ifndef FILESH_165548
+#define FILESH_165548
 
 int filesize(const char *filepath);
 

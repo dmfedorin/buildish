@@ -1,4 +1,7 @@
-#include "parse.h"
+#include "lang/parse.h"
+
+#include "util/debug.h"
+#include <stdio.h>
 
 #define ERRUNEXPECTED "unexpected token"
 #define ERRUNHANDLED  "unhandled token encountered"
@@ -40,7 +43,7 @@ void cleanast(struct astnode *root)
 static inline const struct tok *prevtok(const struct arraylist *toks,
                                         int *tokind)
 {
-        (*tokind)--;
+        --*tokind;
         return getalelem(toks, *tokind);
 }
 
@@ -53,7 +56,7 @@ static inline const struct tok *curtok(const struct arraylist *toks,
 static inline const struct tok *nexttok(const struct arraylist *toks,
                                         int *tokind)
 {
-        (*tokind)++;
+        ++*tokind;
         return getalelem(toks, *tokind);
 }
 

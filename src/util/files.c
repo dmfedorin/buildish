@@ -1,4 +1,7 @@
-#include "files.h"
+#include "util/files.h"
+
+#include "util/debug.h"
+#include <stdio.h>
 
 #define ERRNOFILE "attempting to open nonexistant file"
 

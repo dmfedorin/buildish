@@ -1,13 +1,7 @@
-#ifndef LEX_H_INCLUDED
-#define LEX_H_INCLUDED
+#ifndef LEXH_165833
+#define LEXH_165833
 
-#include "../util/arraylist.h"
-
-#include <stdint.h>
-#include <stdbool.h>
-#include <ctype.h>
-#include <string.h>
-#include <stdio.h>
+#include "util/arraylist.h"
 
 enum toktype {
         TT_NULL,

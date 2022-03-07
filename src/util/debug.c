@@ -1,4 +1,7 @@
-#include "debug.h"
+#include "util/debug.h"
+
+#include <stdio.h>
+#include <stdlib.h>
 
 void loginfo(const char *msg)
 {

@@ -1,8 +1,5 @@
-#ifndef DEBUG_H_INCLUDED
-#define DEBUG_H_INCLUDED
-
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef DEBUGH_165623
+#define DEBUGH_165623
 
 void loginfo(const char *msg);
 

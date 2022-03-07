@@ -1,4 +1,10 @@
-#include "lex.h"
+#include "lang/lex.h"
+
+#include <stdbool.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define LEXBUFSIZE 1024
 
@@ -79,16 +85,16 @@ static void addtok(struct arraylist *toks, enum toktype type,
 static void skipcomment(const char **curchar)
 {
         // the first backtick will end the comment if not skipped
-        (*curchar)++;
+        ++*curchar;
 
         while (**curchar != '`')
-                (*curchar)++;
+                ++*curchar;
         
         /*
         skip one more character to stop another comment from being started
         during lexing
         */
-        (*curchar)++;
+        ++*curchar;
 }
 
 static void lexspecial(struct arraylist *toks, const char **curchar, int line)
@@ -99,7 +105,7 @@ static void lexspecial(struct arraylist *toks, const char **curchar, int line)
 
         addtok(toks, chartott(**curchar), buf, line);
 
-        (*curchar)++;
+        ++*curchar;
 }
 
 static void lexnumliteral(struct arraylist *toks, const char **curchar,
@@ -109,9 +115,8 @@ static void lexnumliteral(struct arraylist *toks, const char **curchar,
         int bufind = 0;
 
         while (isdigit(**curchar) || **curchar == '.') {
-                buf[bufind] = **curchar;
-                bufind++;
-                (*curchar)++;
+                strncat(buf, *curchar, 1);
+                ++*curchar;
         }
 
         addtok(toks, TT_NUMLITERAL, buf, line);
@@ -124,12 +129,11 @@ static void lexstrliteral(struct arraylist *toks, const char **curchar,
         int bufind = 0;
 
         // dont lex the first quote of the string
-        (*curchar)++;
+        ++*curchar;
 
         while (**curchar != '"') {
-                buf[bufind] = **curchar;
-                bufind++;
-                (*curchar)++;
+                strncat(buf, *curchar, 1);
+                ++*curchar;
         }
         
         addtok(toks, TT_STRLITERAL, buf, line);
@@ -138,7 +142,7 @@ static void lexstrliteral(struct arraylist *toks, const char **curchar,
         skip past last quote or else lex will immediately try to create
         another string literal, causing a segfault
         */
-        (*curchar)++;
+        ++*curchar;
 }
 
 static void lexidentifier(struct arraylist *toks, const char **curchar,
@@ -148,9 +152,8 @@ static void lexidentifier(struct arraylist *toks, const char **curchar,
         int bufind = 0;
 
         while (isalpha(**curchar) || **curchar == '_' || isdigit(**curchar)) {
-                buf[bufind] = **curchar;
-                bufind++;
-                (*curchar)++;
+                strncat(buf, *curchar, 1);
+                ++*curchar;
         }
 
         addtok(toks, TT_IDENTIFIER, buf, line);

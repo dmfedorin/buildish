@@ -1,1 +1,1 @@
-gcc -o build/buildish src/*.c src/**/*.c -O3
+gcc -o build/buildish src/*.c src/*/*.c -O3 -Iinclude

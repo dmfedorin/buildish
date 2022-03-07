@@ -1,4 +1,8 @@
-#include "arraylist.h"
+#include "util/arraylist.h"
+
+#include <stdlib.h>
+#include <string.h>
+#include "util/util.h"
 
 void inital(struct arraylist *al, int stride)
 {

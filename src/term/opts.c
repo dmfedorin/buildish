@@ -1,4 +1,6 @@
-#include "opts.h"
+#include "term/opts.h"
+
+#include <string.h>
 
 void initopts(struct arraylist *opts)
 {

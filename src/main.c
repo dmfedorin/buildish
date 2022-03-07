@@ -1,7 +1,9 @@
 #include "lang/lex.h"
 #include "lang/parse.h"
+#include <stdio.h>
 #include "lang/exec.h"
 #include "util/files.h"
+#include <stdlib.h>
 #include "term/opts.h"
 
 #define FILEPATH               "buildishprocs"

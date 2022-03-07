@@ -1,4 +1,12 @@
-#include "exec.h"
+#include "lang/exec.h"
+
+#include "util/debug.h"
+#include <stdlib.h>
+#include "util/arraylist.h"
+#include <dirent.h>
+#include "util/fmt.h"
+#include "util/files.h"
+#include <string.h>
 
 #define ERRNOPROC  "calling nonexistant procedure"
 #define ERRNODIR   "opening nonexistant directory"
@@ -58,6 +66,7 @@ static void execlog(const struct astnode *node)
 {
         for (int i = 0; i < node->toks.size; i++) {
                 const struct tok *msg = gettok(node, i);
+#include <stdint.h>
                 loginfo(msg->value);
         }
 }

@@ -1,7 +1,5 @@
-#ifndef FMT_H_INCLUDED
-#define FMT_H_INCLUDED
-
-#include <string.h>
+#ifndef FMTH_165529
+#define FMTH_165529
 
 // replaces every "%" in the src with the replace string
 // assumes dst is big enough to fit the output

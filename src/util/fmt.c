@@ -1,4 +1,6 @@
-#include "fmt.h"
+#include "util/fmt.h"
+
+#include <string.h>
 
 // replaces every "%" in the src with the replace string
 // assumes dst is big enough to fit the output

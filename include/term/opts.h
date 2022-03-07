@@ -1,10 +1,8 @@
-#ifndef OPTS_H_INCLUDED
-#define OPTS_H_INCLUDED
+#ifndef OPTSH_165737
+#define OPTSH_165737
 
-#include "../util/arraylist.h"
-
+#include "util/arraylist.h"
 #include <stdbool.h>
-#include <string.h>
 
 void initopts(struct arraylist *opts);
 
