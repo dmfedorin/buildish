@@ -34,7 +34,7 @@ int main(int argc, const char *argv[])
         initast(&root);
 
         src = malloc(filesize(FILEPATH));
-        rdfile(src, FILEPATH);
+        readfile(src, FILEPATH);
 
         lex(&toks, src);
         parse(&root, &toks);

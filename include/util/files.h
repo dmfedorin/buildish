@@ -3,7 +3,7 @@
 
 int filesize(const char *filepath);
 
-void rdfile(char *dst, const char *filepath);
+void readfile(char *dst, const char *filepath);
 
 const char *fileext(const char *filename);
 

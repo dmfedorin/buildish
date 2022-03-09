@@ -22,7 +22,7 @@ int filesize(const char *filepath)
         return size;
 }
 
-void rdfile(char *dst, const char *filepath)
+void readfile(char *dst, const char *filepath)
 {
         FILE *fp = fopen(filepath, "rb");
         
