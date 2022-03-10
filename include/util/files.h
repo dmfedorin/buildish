@@ -1,10 +1,10 @@
-#ifndef FILESH_165548
-#define FILESH_165548
+#ifndef FILES_H_165548
+#define FILES_H_165548
 
-int filesize(const char *filepath);
+int file_size(const char *filepath);
 
-void readfile(char *dst, const char *filepath);
+void read_file(char *dst, const char *filepath);
 
-const char *fileext(const char *filename);
+const char *file_ext(const char *filename);
 
 #endif

@@ -1,7 +1,7 @@
-#ifndef DEBUGH_165623
-#define DEBUGH_165623
+#ifndef DEBUG_H_165623
+#define DEBUG_H_165623
 
-void loginfo(const char *msg);
+void log_info(const char *msg);
 
 void warning(const char *msg);
 

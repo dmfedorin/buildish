@@ -2,26 +2,26 @@
 
 #include <string.h>
 
-void initopts(struct arraylist *opts)
+void init_opts(struct array_list *opts)
 {
-        inital(opts, sizeof(char *));
+        init_array_list(opts, sizeof(char *));
 }
 
-void cleanopts(struct arraylist *opts)
+void clean_opts(struct array_list *opts)
 {
-        cleanal(opts);
+        clean_array_list(opts);
 }
 
-void getopts(struct arraylist *opts, int argc, const char *argv[])
+void get_opts(struct array_list *opts, int argc, const char *argv[])
 {
         for (int i = 1; i < argc; i++)
-                addalelem(opts, argv[i]);
+                add_array_list_elem(opts, argv[i]);
 }
 
-bool optscont(const struct arraylist *opts, const char *opt)
+bool opts_cont(const struct array_list *opts, const char *opt)
 {
         for (int i = 0; i < opts->size; i++) {
-                if (strcmp(opt, getalelem(opts, i)) == 0)
+                if (strcmp(opt, array_list_elem(opts, i)) == 0)
                         return true;
         }
 

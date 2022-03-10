@@ -4,32 +4,32 @@
 #include <string.h>
 #include "util/util.h"
 
-void inital(struct arraylist *al, int stride)
+void init_array_list(struct array_list *al, int stride)
 {
-        *al = (struct arraylist){
+        *al = (struct array_list){
                 .size = 0, .stride = stride, .data = malloc(1),
         };
 }
 
-void cleanal(struct arraylist *al)
+void clean_array_list(struct array_list *al)
 {
         free(al->data);
 }
 
-const void *getalelem(const struct arraylist *al, int ind)
+const void *array_list_elem(const struct array_list *al, int ind)
 {
         return al->data + al->stride * ind;
 }
 
-static inline void *lastalelem(struct arraylist *al)
+static inline void *last_array_list_elem(struct array_list *al)
 {
         return al->data + al->stride * max(0, al->size - 1);
 }
 
-void addalelem(struct arraylist *al, const void *elem)
+void add_array_list_elem(struct array_list *al, const void *elem)
 {
         al->size++;
         al->data = realloc(al->data, al->stride * al->size);
 
-        memcpy(lastalelem(al), elem, al->stride);
+        memcpy(last_array_list_elem(al), elem, al->stride);
 }

@@ -3,14 +3,14 @@
 #include "util/debug.h"
 #include <stdio.h>
 
-#define ERRNOFILE "attempting to open nonexistant file"
+#define ERROR_NO_FILE "attempting to open nonexistant file"
 
-int filesize(const char *filepath)
+int file_size(const char *filepath)
 {
         FILE *fp = fopen(filepath, "rb");
 
         if (fp == NULL)
-                error(ERRNOFILE);
+                error(ERROR_NO_FILE);
 
         fseek(fp, 0, SEEK_END);
 
@@ -22,18 +22,18 @@ int filesize(const char *filepath)
         return size;
 }
 
-void readfile(char *dst, const char *filepath)
+void read_file(char *dst, const char *filepath)
 {
         FILE *fp = fopen(filepath, "rb");
         
         if (fp == NULL)
-                error(ERRNOFILE);
+                error(ERROR_NO_FILE);
 
-        fread(dst, 1, filesize(filepath), fp);
+        fread(dst, 1, file_size(filepath), fp);
         fclose(fp);
 }
 
-const char *fileext(const char *filename)
+const char *file_ext(const char *filename)
 {
         const char *c = filename;
 

@@ -1,15 +1,15 @@
-#ifndef OPTSH_165737
-#define OPTSH_165737
+#ifndef OPTS_H_165737
+#define OPTS_H_165737
 
 #include "util/arraylist.h"
 #include <stdbool.h>
 
-void initopts(struct arraylist *opts);
+void init_opts(struct array_list *opts);
 
-void cleanopts(struct arraylist *opts);
+void clean_opts(struct array_list *opts);
 
-void getopts(struct arraylist *opts, int argc, const char *argv[]);
+void get_opts(struct array_list *opts, int argc, const char *argv[]);
 
-bool optscont(const struct arraylist *opts, const char *opt);
+bool opts_contain(const struct array_list *opts, const char *opt);
 
 #endif
