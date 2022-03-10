@@ -18,7 +18,7 @@ void get_opts(struct array_list *opts, int argc, const char *argv[])
                 add_array_list_elem(opts, argv[i]);
 }
 
-bool opts_cont(const struct array_list *opts, const char *opt)
+bool opts_contain(const struct array_list *opts, const char *opt)
 {
         for (int i = 0; i < opts->size; i++) {
                 if (strcmp(opt, array_list_elem(opts, i)) == 0)

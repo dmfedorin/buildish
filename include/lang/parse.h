@@ -1,5 +1,5 @@
-#ifndef PARSEH_165904
-#define PARSEH_165904
+#ifndef PARSE_H_165904
+#define PARSE_H_165904
 
 #include "util/arraylist.h"
 #include "lang/lex.h"
@@ -16,31 +16,32 @@ node types of equal order should be next to each other
 in parse.c, define the functions for parsing node types in the reverse order
 */
 
-enum astnodetype {
-        ANT_ROOT,
-        ANT_PROC,
-        ANT_BLOCK,
-        ANT_ALLCMD,
-        ANT_CMD,
-        ANT_CALL,
-        ANT_LOG,
+enum ast_node_type {
+        AST_NODE_TYPE_ROOT,
+        AST_NODE_TYPE_PROC,
+        AST_NODE_TYPE_BLOCK,
+        AST_NODE_TYPE_ALLCMD,
+        AST_NODE_TYPE_CMD,
+        AST_NODE_TYPE_CALL,
+        AST_NODE_TYPE_LOG,
 };
 
-struct astnode {
-        enum astnodetype type;
-        struct arraylist toks, children;
+struct ast_node {
+        enum ast_node_type type;
+        struct array_list toks, children;
 };
 
-const struct astnode *getchild(const struct astnode *node, int ind);
+const struct ast_node *ast_node_child(const struct ast_node *node, int ind);
 
-const struct tok *gettok(const struct astnode *node, int ind);
+const struct token *ast_node_token(const struct ast_node *node, int ind);
 
-void initast(struct astnode *root);
+void init_ast(struct ast_node *root);
 
-void cleanast(struct astnode *root);
+void clean_ast(struct ast_node *root);
 
-void parse(struct astnode *root, const struct arraylist *toks);
+// the ast will be written onto the root ast node
+void parse(struct ast_node *root, const struct array_list *toks);
 
-void printast(const struct astnode *root);
+void print_ast(const struct ast_node *root);
 
 #endif

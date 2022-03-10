@@ -48,13 +48,16 @@ struct token {
         int line;
 };
 
-void inittoks(struct arraylist *toks);
+void init_tokens(struct array_list *toks);
 
-void cleantoks(struct arraylist *toks);
+void clean_tokens(struct array_list *toks);
 
-// src needs to be null terminated
-void lex(struct arraylist *toks, const char *src);
+/*
+src needs to be null terminated
+will write the lexed tokens into the toks array list
+*/
+void lex(struct array_list *toks, const char *src);
 
-void printtoks(const struct arraylist *toks);
+void print_tokens(const struct array_list *toks);
 
 #endif

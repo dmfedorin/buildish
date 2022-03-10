@@ -11,12 +11,12 @@
 
 static char *src;
 static struct array_list toks, opts;
-static struct astnode root;
+static struct ast_node root;
 
 static void clean(void)
 {
-        cleanast(&root);
-        cleantoks(&toks);
+        clean_ast(&root);
+        clean_tokens(&toks);
         clean_opts(&opts);
         free(src);
 }
@@ -30,8 +30,8 @@ int main(int argc, const char *argv[])
         init_opts(&opts);
         get_opts(&opts, argc, argv);
 
-        inittoks(&toks);
-        initast(&root);
+        init_tokens(&toks);
+        init_ast(&root);
 
         src = malloc(file_size(FILEPATH));
         read_file(src, FILEPATH);
@@ -40,10 +40,10 @@ int main(int argc, const char *argv[])
         parse(&root, &toks);
 
         if (opts_contain(&opts, "-dtoks"))
-                printtoks(&toks);
+                print_tokens(&toks);
         
         if (opts_contain(&opts, "-dast"))
-                printast(&root);
+                print_ast(&root);
 
         exec(&root);
 

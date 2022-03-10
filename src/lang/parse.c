@@ -3,277 +3,293 @@
 #include "util/debug.h"
 #include <stdio.h>
 
-#define ERRUNEXPECTED "unexpected token"
-#define ERRUNHANDLED  "unhandled token encountered"
+#define ERROR_UNEXPECTED_TOKEN "unexpected token"
+#define ERROR_UNHANDLED_TOKEN  "unhandled token encountered"
 
-const struct astnode *getchild(const struct astnode *node, int ind)
+const struct ast_node *ast_node_child(const struct ast_node *node, int ind)
 {
-        return getalelem(&node->children, ind);
+        return array_list_elem(&node->children, ind);
 }
 
-const struct tok *gettok(const struct astnode *node, int ind)
+const struct token *ast_node_token(const struct ast_node *node, int ind)
 {
-        return getalelem(&node->toks, ind);
+        return array_list_elem(&node->toks, ind);
 }
 
-void initast(struct astnode *root)
+void init_ast(struct ast_node *root)
 {
-        root->type = ANT_ROOT;
+        root->type = AST_NODE_TYPE_ROOT;
 
-        inital(&root->toks, sizeof(struct tok));
-        inital(&root->children, sizeof(struct astnode));
+        init_array_list(&root->toks, sizeof(struct token));
+        init_array_list(&root->children, sizeof(struct ast_node));
 }
 
-static void cleannode(struct astnode *node)
+static void clean_node(struct ast_node *node)
 {
         for (int i = 0; i < node->children.size; i++) {
-                struct astnode *children = node->children.data;
-                cleannode(&children[i]);
+                struct ast_node *children = node->children.data;
+                clean_node(&children[i]);
         }
 
-        cleanal(&node->toks);
-        cleanal(&node->children);
+        clean_array_list(&node->toks);
+        clean_array_list(&node->children);
 }
 
-void cleanast(struct astnode *root)
+void clean_ast(struct ast_node *root)
 {
-        cleannode(root);
+        clean_node(root);
 }
 
-static inline const struct tok *prevtok(const struct arraylist *toks,
-                                        int *tokind)
+static inline const struct token *prev_token(const struct array_list *toks,
+                                             int *tokind)
 {
         --*tokind;
-        return getalelem(toks, *tokind);
+        return array_list_elem(toks, *tokind);
 }
 
-static inline const struct tok *curtok(const struct arraylist *toks,
-                                       int tokind)
+static inline const struct token *current_token(const struct array_list *toks,
+                                                int tokind)
 {
-        return getalelem(toks, tokind);
+        return array_list_elem(toks, tokind);
 }
 
-static inline const struct tok *nexttok(const struct arraylist *toks,
-                                        int *tokind)
+static inline const struct token *next_token(const struct array_list *toks,
+                                             int *tokind)
 {
         ++*tokind;
-        return getalelem(toks, *tokind);
+        return array_list_elem(toks, *tokind);
 }
 
-static inline const struct tok *peektok(const struct arraylist *toks,
-                                        int tokind)
+static inline const struct token *peek_token(const struct array_list *toks,
+                                             int tokind)
 {
-        return getalelem(toks, tokind + 1);
+        return array_list_elem(toks, tokind + 1);
 }
 
-static inline const void parseerr(const struct tok *tok, const char *msg)
+static inline const void parser_error(const struct token *tok,
+                                      const char *msg)
 {
         printf("[L:%d] ", tok->line);
-        error(ERRUNEXPECTED);
+        error(ERROR_UNEXPECTED_TOKEN);
 }
 
-static inline const void expect(const struct arraylist *toks, int *tokind,
-                                enum toktype type)
+static inline const void expect(const struct array_list *toks, int *tokind,
+                                enum token_type type)
 {
-        if (nexttok(toks, tokind)->type != type)
-                parseerr(curtok(toks, *tokind), ERRUNEXPECTED);
+        if (next_token(toks, tokind)->type != type) {
+                parser_error(current_token(toks, *tokind),
+                             ERROR_UNEXPECTED_TOKEN);
+        }
 }
 
-static struct astnode *addchild(struct astnode *parent, enum astnodetype type)
+static struct ast_node *add_ast_node_child(struct ast_node *parent,
+                                           enum ast_node_type type)
 {
-        struct astnode child = {
+        struct ast_node child = {
                 .type = type,
         };
 
-        inital(&child.toks, sizeof(struct tok));
-        inital(&child.children, sizeof(struct astnode));
-        addalelem(&parent->children, &child);
+        init_array_list(&child.toks, sizeof(struct token));
+        init_array_list(&child.children, sizeof(struct ast_node));
+        add_array_list_elem(&parent->children, &child);
 
-        struct astnode *children = parent->children.data;
+        struct ast_node *children = parent->children.data;
 
         return &children[parent->children.size - 1];
 }
 
-static inline void addtok(struct astnode *node, const struct tok *tok)
+static inline void add_ast_node_token(struct ast_node *node,
+                                      const struct token *tok)
 {
-        addalelem(&node->toks, tok);
+        add_array_list_elem(&node->toks, tok);
 }
 
 // extracts every meaningful token between parentheses onto a node
-static void extractparentoks(struct astnode *node,
-                             const struct arraylist *toks, int *tokind)
+static void extract_paren_tokens(struct ast_node *node,
+                                 const struct array_list *toks, int *tokind)
 {
-        while (nexttok(toks, tokind)->type != TT_RPAREN) {
-                switch (curtok(toks, *tokind)->type) {
-                case TT_IDENTIFIER:
-                case TT_STRLITERAL:
-                case TT_NUMLITERAL:
-                        addtok(node, curtok(toks, *tokind));
+        while (next_token(toks, tokind)->type != TOKEN_TYPE_RPAREN) {
+                switch (current_token(toks, *tokind)->type) {
+                case TOKEN_TYPE_IDENTIFIER:
+                case TOKEN_TYPE_STRLITERAL:
+                case TOKEN_TYPE_NUMLITERAL:
+                        add_ast_node_token(node,
+                                           current_token(toks, *tokind));
+
                         break;
-                
                 default:
-                        parseerr(curtok(toks, *tokind), ERRUNHANDLED);
+                        parser_error(current_token(toks, *tokind),
+                                    ERROR_UNHANDLED_TOKEN);
+
+                        break;
                 }
 
                 /*
                 unconditionally expecting will force an unnecessary comma to
                 be required after the last token
                 */
-                if (peektok(toks, *tokind)->type != TT_RPAREN)
-                        expect(toks, tokind, TT_COMMA);
+                if (peek_token(toks, *tokind)->type != TOKEN_TYPE_RPAREN)
+                        expect(toks, tokind, TOKEN_TYPE_COMMA);
         }
 }
 
-static inline void parselog(struct astnode *parent,
-                            const struct arraylist *toks, int *tokind)
+static inline void parse_log(struct ast_node *parent,
+                             const struct array_list *toks, int *tokind)
 {
-        struct astnode *node = addchild(parent, ANT_LOG);
-        expect(toks, tokind, TT_LPAREN);
-        extractparentoks(node, toks, tokind);
+        struct ast_node *node = add_ast_node_child(parent, AST_NODE_TYPE_LOG);
+        expect(toks, tokind, TOKEN_TYPE_LPAREN);
+        extract_paren_tokens(node, toks, tokind);
 }
 
-static inline void parsecall(struct astnode *parent,
-                             const struct arraylist *toks, int *tokind)
+static inline void parse_call(struct ast_node *parent,
+                              const struct array_list *toks, int *tokind)
 {
-        struct astnode *node = addchild(parent, ANT_CALL);
-        expect(toks, tokind, TT_LPAREN);
-        extractparentoks(node, toks, tokind);
+        struct ast_node *node = add_ast_node_child(parent,
+                                                   AST_NODE_TYPE_CALL);
+                                                   
+        expect(toks, tokind, TOKEN_TYPE_LPAREN);
+        extract_paren_tokens(node, toks, tokind);
 }
 
-static inline void parsecmd(struct astnode *parent,
-                            const struct arraylist *toks, int *tokind)
+static inline void parse_cmd(struct ast_node *parent,
+                             const struct array_list *toks, int *tokind)
 {
-        struct astnode *node = addchild(parent, ANT_CMD);
-        expect(toks, tokind, TT_LPAREN);
-        extractparentoks(node, toks, tokind);
+        struct ast_node *node = add_ast_node_child(parent, AST_NODE_TYPE_CMD);
+
+        expect(toks, tokind, TOKEN_TYPE_LPAREN);
+        extract_paren_tokens(node, toks, tokind);
 }
 
-static void parseallcmd(struct astnode *parent, const struct arraylist *toks,
-                        int *tokind)
+static void parse_allcmd(struct ast_node *parent,
+                         const struct array_list *toks, int *tokind)
 {
-        struct astnode *node = addchild(parent, ANT_ALLCMD);
+        struct ast_node *node = add_ast_node_child(parent,
+                                                   AST_NODE_TYPE_ALLCMD);
 
-        expect(toks, tokind, TT_LPAREN);
-        expect(toks, tokind, TT_STRLITERAL);
+        expect(toks, tokind, TOKEN_TYPE_LPAREN);
+        expect(toks, tokind, TOKEN_TYPE_STRLITERAL);
         
         // directory
-        addtok(node, curtok(toks, *tokind));
+        add_ast_node_token(node, current_token(toks, *tokind));
         
-        expect(toks, tokind, TT_COMMA);
-        expect(toks, tokind, TT_STRLITERAL);
+        expect(toks, tokind, TOKEN_TYPE_COMMA);
+        expect(toks, tokind, TOKEN_TYPE_STRLITERAL);
         
         // file extension
-        addtok(node, curtok(toks, *tokind));
+        add_ast_node_token(node, current_token(toks, *tokind));
         
-        expect(toks, tokind, TT_COMMA);
-        expect(toks, tokind, TT_STRLITERAL);
+        expect(toks, tokind, TOKEN_TYPE_COMMA);
+        expect(toks, tokind, TOKEN_TYPE_STRLITERAL);
         
         // command
-        addtok(node, curtok(toks, *tokind));
+        add_ast_node_token(node, current_token(toks, *tokind));
         
-        expect(toks, tokind, TT_RPAREN);
+        expect(toks, tokind, TOKEN_TYPE_RPAREN);
 }
 
-static void parseblock(struct astnode *parent, const struct arraylist *toks,
-                       int *tokind)
+static void parse_block(struct ast_node *parent,
+                        const struct array_list *toks, int *tokind)
 {
-        struct astnode *node = addchild(parent, ANT_BLOCK);
+        struct ast_node *node = add_ast_node_child(parent,
+                                                   AST_NODE_TYPE_BLOCK);
 
-        while (nexttok(toks, tokind)->type != TT_RBRACE) {
-                switch (curtok(toks, *tokind)->type) {
-                case TT_LBRACE:
-                        parseblock(node, toks, tokind);
+        while (next_token(toks, tokind)->type != TOKEN_TYPE_RBRACE) {
+                switch (current_token(toks, *tokind)->type) {
+                case TOKEN_TYPE_LBRACE:
+                        parse_block(node, toks, tokind);
                         break;
-
-                case TT_PERCENTAGE:
-                        parseallcmd(node, toks, tokind);
+                case TOKEN_TYPE_PERCENTAGE:
+                        parse_allcmd(node, toks, tokind);
                         break;
-
-                case TT_DOLLAR:
-                        parsecmd(node, toks, tokind);
+                case TOKEN_TYPE_DOLLAR:
+                        parse_cmd(node, toks, tokind);
                         break;
-
-                case TT_RANGLE:
-                        parsecall(node, toks, tokind);
+                case TOKEN_TYPE_RANGLE:
+                        parse_call(node, toks, tokind);
                         break;
-
-                case TT_EXCLAMATION:
-                        parselog(node, toks, tokind);
+                case TOKEN_TYPE_EXCLAMATION:
+                        parse_log(node, toks, tokind);
                         break;
-
                 default:
-                        parseerr(curtok(toks, *tokind), ERRUNHANDLED);
+                        parser_error(current_token(toks, *tokind),
+                                     ERROR_UNHANDLED_TOKEN);
+
+                        break;
                 }
 
-                expect(toks, tokind, TT_SEMICOLON);
+                expect(toks, tokind, TOKEN_TYPE_SEMICOLON);
         }
 }
 
-static void parseproc(struct astnode *parent, const struct arraylist *toks,
-                      int *tokind)
+static void parse_proc(struct ast_node *parent, const struct array_list *toks,
+                       int *tokind)
 {
-        struct astnode *node = addchild(parent, ANT_PROC);
+        struct ast_node *node = add_ast_node_child(parent,
+                                                   AST_NODE_TYPE_PROC);
 
-        expect(toks, tokind, TT_IDENTIFIER);
+        expect(toks, tokind, TOKEN_TYPE_IDENTIFIER);
 
-        addtok(node, curtok(toks, *tokind));
+        add_ast_node_token(node, current_token(toks, *tokind));
         
-        expect(toks, tokind, TT_LBRACE);
-        parseblock(node, toks, tokind);
+        expect(toks, tokind, TOKEN_TYPE_LBRACE);
+        parse_block(node, toks, tokind);
 }
 
-void parse(struct astnode *root, const struct arraylist *toks)
+// the ast will be written onto the root ast node
+void parse(struct ast_node *root, const struct array_list *toks)
 {
         int tokind = 0;
 
-        while (nexttok(toks, &tokind)->type != TT_EOF) {
-                switch (curtok(toks, tokind)->type) {
-                case TT_AT:
-                        parseproc(root, toks, &tokind);
+        while (next_token(toks, &tokind)->type != TOKEN_TYPE_EOF) {
+                switch (current_token(toks, tokind)->type) {
+                case TOKEN_TYPE_AT:
+                        parse_proc(root, toks, &tokind);
                         break;
-
                 default:
-                        parseerr(curtok(toks, tokind), ERRUNHANDLED);
+                        parser_error(current_token(toks, tokind),
+                                     ERROR_UNHANDLED_TOKEN);
+
+                        break;
                 }
         }
 }
 
-static const char *anttostr(enum astnodetype type)
+static const char *ast_node_type_to_str(enum ast_node_type type)
 {
         switch (type) {
-        case ANT_ROOT:   return "root";
-        case ANT_PROC:   return "procedure";
-        case ANT_BLOCK:  return "block";
-        case ANT_ALLCMD: return "allcommand";
-        case ANT_CMD:    return "command";
-        case ANT_CALL:   return "call";
-        case ANT_LOG:    return "log";
+        case AST_NODE_TYPE_ROOT:   return "root";
+        case AST_NODE_TYPE_PROC:   return "procedure";
+        case AST_NODE_TYPE_BLOCK:  return "block";
+        case AST_NODE_TYPE_ALLCMD: return "allcommand";
+        case AST_NODE_TYPE_CMD:    return "command";
+        case AST_NODE_TYPE_CALL:   return "call";
+        case AST_NODE_TYPE_LOG:    return "log";
 
         default: return "unknown";
         }
 }
 
-static void printnode(const struct astnode *node, int depth)
+static void print_ast_node(const struct ast_node *node, int depth)
 {
         for (int i = 0; i < depth; i++)
                 printf("\t");
 
-        printf("| %s [", anttostr(node->type));
+        printf("| %s [", ast_node_type_to_str(node->type));
 
         for (int i = 0; i < node->toks.size; i++) {
-                const struct tok *tok = gettok(node, i);
+                const struct token *tok = ast_node_token(node, i);
                 printf("%s, ", tok->value);
         }
 
         printf("]\n");
 
         for (int i = 0; i < node->children.size; i++) {
-                const struct astnode *child = getchild(node, i);
-                printnode(child, depth + 1);
+                const struct ast_node *child = ast_node_child(node, i);
+                print_ast_node(child, depth + 1);
         }
 }
 
-void printast(const struct astnode *root)
+void print_ast(const struct ast_node *root)
 {
-        printnode(root, 0);
+        print_ast_node(root, 0);
 }
