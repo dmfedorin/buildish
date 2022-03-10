@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void loginfo(const char *msg)
+void log_info(const char *msg)
 {
         printf("log: %s\n", msg);
 }

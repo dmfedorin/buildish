@@ -1,49 +1,49 @@
-#ifndef LEXH_165833
-#define LEXH_165833
+#ifndef LEX_H_165833
+#define LEX_H_165833
 
 #include "util/arraylist.h"
 
-enum toktype {
-        TT_NULL,
-        TT_SOF,
-        TT_EOF,
+enum token_type {
+        TOKEN_TYPE_NULL,
+        TOKEN_TYPE_SOF,
+        TOKEN_TYPE_EOF,
         
-        TT_TILDE,       // ~
-        TT_EXCLAMATION, // !
-        TT_AT,          // @
-        TT_HASH,        // #
-        TT_DOLLAR,      // $
-        TT_PERCENTAGE,  // %
-        TT_CARET,       // ^
-        TT_AMPERSAND,   // &
-        TT_ASTERISK,    // *
-        TT_HYPHEN,      // -
-        TT_EQUALS,      // =
-        TT_PLUS,        // +
-        TT_SEMICOLON,   // ;
-        TT_COLON,       // :
-        TT_COMMA,       // ,
-        TT_PERIOD,      // .
-        TT_PIPE,        // |
-        TT_SLASH,       // /
-        TT_QUESTION,    // ?
+        TOKEN_TYPE_TILDE,       // ~
+        TOKEN_TYPE_EXCLAMATION, // !
+        TOKEN_TYPE_AT,          // @
+        TOKEN_TYPE_HASH,        // #
+        TOKEN_TYPE_DOLLAR,      // $
+        TOKEN_TYPE_PERCENTAGE,  // %
+        TOKEN_TYPE_CARET,       // ^
+        TOKEN_TYPE_AMPERSAND,   // &
+        TOKEN_TYPE_ASTERISK,    // *
+        TOKEN_TYPE_HYPHEN,      // -
+        TOKEN_TYPE_EQUALS,      // =
+        TOKEN_TYPE_PLUS,        // +
+        TOKEN_TYPE_SEMICOLON,   // ;
+        TOKEN_TYPE_COLON,       // :
+        TOKEN_TYPE_COMMA,       // ,
+        TOKEN_TYPE_PERIOD,      // .
+        TOKEN_TYPE_PIPE,        // |
+        TOKEN_TYPE_SLASH,       // /
+        TOKEN_TYPE_QUESTION,    // ?
 
-        TT_LPAREN,   // (
-        TT_RPAREN,   // )
-        TT_LBRACKET, // [
-        TT_RBRACKET, // ]
-        TT_LBRACE,   // {
-        TT_RBRACE,   // }
-        TT_LANGLE,   // <
-        TT_RANGLE,   // >
+        TOKEN_TYPE_LPAREN,   // (
+        TOKEN_TYPE_RPAREN,   // )
+        TOKEN_TYPE_LBRACKET, // [
+        TOKEN_TYPE_RBRACKET, // ]
+        TOKEN_TYPE_LBRACE,   // {
+        TOKEN_TYPE_RBRACE,   // }
+        TOKEN_TYPE_LANGLE,   // <
+        TOKEN_TYPE_RANGLE,   // >
 
-        TT_NUMLITERAL,
-        TT_STRLITERAL,
-        TT_IDENTIFIER,
+        TOKEN_TYPE_NUMLITERAL,
+        TOKEN_TYPE_STRLITERAL,
+        TOKEN_TYPE_IDENTIFIER,
 };
 
-struct tok {
-        enum toktype type;
+struct token {
+        enum token_type type;
         char *value;
         int line;
 };

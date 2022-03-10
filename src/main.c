@@ -6,18 +6,18 @@
 #include <stdlib.h>
 #include "term/opts.h"
 
-#define FILEPATH               "buildishprocs"
-#define VERSION(maj, min, pat) #maj "." #min "." #pat
+#define FILEPATH                     "buildishprocs"
+#define VERSION(major, minor, patch) #major "." #minor "." #patch
 
 static char *src;
-static struct arraylist toks, opts;
+static struct array_list toks, opts;
 static struct astnode root;
 
 static void clean(void)
 {
         cleanast(&root);
         cleantoks(&toks);
-        cleanopts(&opts);
+        clean_opts(&opts);
         free(src);
 }
 
@@ -27,22 +27,22 @@ int main(int argc, const char *argv[])
         
         printf("buildish %s\n", VERSION(1, 3, 2));
 
-        initopts(&opts);
-        getopts(&opts, argc, argv);
+        init_opts(&opts);
+        get_opts(&opts, argc, argv);
 
         inittoks(&toks);
         initast(&root);
 
-        src = malloc(filesize(FILEPATH));
-        readfile(src, FILEPATH);
+        src = malloc(file_size(FILEPATH));
+        read_file(src, FILEPATH);
 
         lex(&toks, src);
         parse(&root, &toks);
 
-        if (optscont(&opts, "-dtoks"))
+        if (opts_contain(&opts, "-dtoks"))
                 printtoks(&toks);
         
-        if (optscont(&opts, "-dast"))
+        if (opts_contain(&opts, "-dast"))
                 printast(&root);
 
         exec(&root);
