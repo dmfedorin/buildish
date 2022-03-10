@@ -66,7 +66,6 @@ static inline void execlog(const struct astnode *node)
 {
         for (int i = 0; i < node->toks.size; i++) {
                 const struct tok *msg = gettok(node, i);
-#include <stdint.h>
                 loginfo(msg->value);
         }
 }
