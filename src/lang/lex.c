@@ -15,7 +15,7 @@ void init_tokens(struct array_list *toks)
 
 void clean_tokens(struct array_list *toks)
 {
-        for (int i = 0; i < toks->size; i++) {
+        for (int i = 0; i < toks->size; ++i) {
                 struct token *tok = (struct token *)toks->data + i;
                 free(tok->value);
         }
@@ -68,14 +68,14 @@ static void add_token(struct array_list *toks, enum token_type type,
                       const char *value, int line)
 {
         struct token tok = {
-                .type = type, .value = malloc(strlen(value) + 1),
                 .line = line,
+                .type = type,
+                .value = malloc(strlen(value) + 1),
         };
 
-        /*
-        add a null character at the end of the tokens value as it wouldnt
-        normally be added, and is required in null terminated strings
-        */
+        /* add a null character at the end of the tokens value as it wouldnt
+         * normally be added, and is required in null terminated strings
+         */
         tok.value[strlen(value)] = '\0';
 
         memcpy(tok.value, value, strlen(value));
@@ -84,16 +84,15 @@ static void add_token(struct array_list *toks, enum token_type type,
 
 static void skip_comment(const char **curchar)
 {
-        // the first backtick will end the comment if not skipped
+        /* the first backtick will end the comment if not skipped */
         ++*curchar;
 
         while (**curchar != '`')
                 ++*curchar;
         
-        /*
-        skip one more character to stop another comment from being started
-        during lexing
-        */
+        /* skip one more character to stop another comment from being started
+         * during lexing
+         */
         ++*curchar;
 }
 
@@ -127,7 +126,7 @@ static void lex_str_literal(struct array_list *toks, const char **curchar,
 {
         char buf[LEX_BUFFER_SIZE] = { 0 };
 
-        // dont lex the first quote of the string
+        /* dont lex the first quote of the string */
         ++*curchar;
 
         while (**curchar != '"') {
@@ -137,10 +136,9 @@ static void lex_str_literal(struct array_list *toks, const char **curchar,
         
         add_token(toks, TOKEN_TYPE_STRLITERAL, buf, line);
 
-        /*
-        skip past last quote or else lex will immediately try to create
-        another string literal, causing a segfault
-        */
+        /* skip past last quote or else lex will immediately try to create
+         * another string literal, causing a segfault
+         */
         ++*curchar;
 }
 
@@ -157,10 +155,9 @@ static void lex_identifier(struct array_list *toks, const char **curchar,
         add_token(toks, TOKEN_TYPE_IDENTIFIER, buf, line);
 }
 
-/*
-src needs to be null terminated
-will write the lexed tokens into the toks array list
-*/
+/* src needs to be null terminated
+ * will write the lexed tokens into the toks array list
+ */
 void lex(struct array_list *toks, const char *src)
 {
         add_token(toks, TOKEN_TYPE_SOF, "SOF", -1);
@@ -235,7 +232,7 @@ static char token_type_to_char(enum token_type type)
 
 void print_tokens(const struct array_list *toks)
 {
-        for (int i = 0; i < toks->size; i++) {
+        for (int i = 0; i < toks->size; ++i) {
                 const struct token *tok = array_list_elem(toks, i);
 
                 printf("[%d] (%d, %c) - \"%s\"\n", i, tok->type,

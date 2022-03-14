@@ -7,7 +7,9 @@
 void init_array_list(struct array_list *al, int stride)
 {
         *al = (struct array_list){
-                .size = 0, .stride = stride, .data = malloc(1),
+                .size = 0,
+                .stride = stride,
+                .data = malloc(1),
         };
 }
 
@@ -28,7 +30,7 @@ static inline void *last_array_list_elem(struct array_list *al)
 
 void add_array_list_elem(struct array_list *al, const void *elem)
 {
-        al->size++;
+        ++al->size;
         al->data = realloc(al->data, al->stride * al->size);
 
         memcpy(last_array_list_elem(al), elem, al->stride);

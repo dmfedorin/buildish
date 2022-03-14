@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 #define ERROR_UNEXPECTED_TOKEN "unexpected token"
-#define ERROR_UNHANDLED_TOKEN  "unhandled token encountered"
+#define ERROR_UNHANDLED_TOKEN "unhandled token encountered"
 
 const struct ast_node *ast_node_child(const struct ast_node *node, int ind)
 {
@@ -26,7 +26,7 @@ void init_ast(struct ast_node *root)
 
 static void clean_node(struct ast_node *node)
 {
-        for (int i = 0; i < node->children.size; i++) {
+        for (int i = 0; i < node->children.size; ++i) {
                 struct ast_node *children = node->children.data;
                 clean_node(&children[i]);
         }
@@ -124,10 +124,9 @@ static void extract_paren_tokens(struct ast_node *node,
                         break;
                 }
 
-                /*
-                unconditionally expecting will force an unnecessary comma to
-                be required after the last token
-                */
+                /* unconditionally expecting will force an unnecessary comma
+                 * to be required after the last token
+                 */
                 if (peek_token(toks, *tokind)->type != TOKEN_TYPE_RPAREN)
                         expect(toks, tokind, TOKEN_TYPE_COMMA);
         }
@@ -169,19 +168,19 @@ static void parse_allcmd(struct ast_node *parent,
         expect(toks, tokind, TOKEN_TYPE_LPAREN);
         expect(toks, tokind, TOKEN_TYPE_STRLITERAL);
         
-        // directory
+        /* directory */
         add_ast_node_token(node, current_token(toks, *tokind));
         
         expect(toks, tokind, TOKEN_TYPE_COMMA);
         expect(toks, tokind, TOKEN_TYPE_STRLITERAL);
         
-        // file extension
+        /* file extension */
         add_ast_node_token(node, current_token(toks, *tokind));
         
         expect(toks, tokind, TOKEN_TYPE_COMMA);
         expect(toks, tokind, TOKEN_TYPE_STRLITERAL);
         
-        // command
+        /* command */
         add_ast_node_token(node, current_token(toks, *tokind));
         
         expect(toks, tokind, TOKEN_TYPE_RPAREN);
@@ -235,7 +234,7 @@ static void parse_proc(struct ast_node *parent, const struct array_list *toks,
         parse_block(node, toks, tokind);
 }
 
-// the ast will be written onto the root ast node
+/* the ast will be written onto the root ast node */
 void parse(struct ast_node *root, const struct array_list *toks)
 {
         int tokind = 0;
@@ -271,19 +270,19 @@ static const char *ast_node_type_to_str(enum ast_node_type type)
 
 static void print_ast_node(const struct ast_node *node, int depth)
 {
-        for (int i = 0; i < depth; i++)
+        for (int i = 0; i < depth; ++i)
                 printf("\t");
 
         printf("| %s [", ast_node_type_to_str(node->type));
 
-        for (int i = 0; i < node->toks.size; i++) {
+        for (int i = 0; i < node->toks.size; ++i) {
                 const struct token *tok = ast_node_token(node, i);
                 printf("%s, ", tok->value);
         }
 
         printf("]\n");
 
-        for (int i = 0; i < node->children.size; i++) {
+        for (int i = 0; i < node->children.size; ++i) {
                 const struct ast_node *child = ast_node_child(node, i);
                 print_ast_node(child, depth + 1);
         }

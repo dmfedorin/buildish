@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "term/opts.h"
 
-#define FILEPATH                     "buildishprocs"
+#define FILEPATH "buildishprocs"
 #define VERSION(major, minor, patch) #major "." #minor "." #patch
 
 static char *src;
