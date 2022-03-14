@@ -2,8 +2,9 @@
 
 #include <string.h>
 
-// replaces every "%" in the src with the replace string
-// assumes dst is big enough to fit the output
+/* replaces every "%" in the src with the replace string
+ * assumes dst is big enough to fit the output
+ */
 void fmt_replace(char *dst, const char *src, const char *replace)
 {
         const char *curchar = src;

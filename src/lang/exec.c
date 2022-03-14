@@ -17,7 +17,7 @@ struct proc {
         const struct ast_node *node;
 };
 
-// all procedures are expected to be children of the root node
+/* all procedures are expected to be children of the root node */
 static void get_procs(struct array_list *procs, const struct ast_node *root)
 {
         for (int i = 0; i < root->children.size; i++) {
