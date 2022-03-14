@@ -26,7 +26,7 @@ void init_ast(struct ast_node *root)
 
 static void clean_node(struct ast_node *node)
 {
-        for (int i = 0; i < node->children.size; i++) {
+        for (int i = 0; i < node->children.size; ++i) {
                 struct ast_node *children = node->children.data;
                 clean_node(&children[i]);
         }
@@ -270,19 +270,19 @@ static const char *ast_node_type_to_str(enum ast_node_type type)
 
 static void print_ast_node(const struct ast_node *node, int depth)
 {
-        for (int i = 0; i < depth; i++)
+        for (int i = 0; i < depth; ++i)
                 printf("\t");
 
         printf("| %s [", ast_node_type_to_str(node->type));
 
-        for (int i = 0; i < node->toks.size; i++) {
+        for (int i = 0; i < node->toks.size; ++i) {
                 const struct token *tok = ast_node_token(node, i);
                 printf("%s, ", tok->value);
         }
 
         printf("]\n");
 
-        for (int i = 0; i < node->children.size; i++) {
+        for (int i = 0; i < node->children.size; ++i) {
                 const struct ast_node *child = ast_node_child(node, i);
                 print_ast_node(child, depth + 1);
         }

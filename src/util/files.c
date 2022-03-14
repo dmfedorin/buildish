@@ -38,7 +38,7 @@ const char *file_ext(const char *filename)
         const char *c = filename;
 
         while (*c != '.' && *c != '\0')
-                c++;
+                ++c;
 
         return c;
 }

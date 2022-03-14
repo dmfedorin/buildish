@@ -8,8 +8,8 @@
 #include "util/files.h"
 #include <string.h>
 
-#define ERROR_NO_PROC   "calling nonexistant procedure"
-#define ERROR_NO_DIR    "opening nonexistant directory"
+#define ERROR_NO_PROC "calling nonexistant procedure"
+#define ERROR_NO_DIR "opening nonexistant directory"
 #define FMT_BUFFER_SIZE 1024
 
 struct proc {
@@ -20,7 +20,7 @@ struct proc {
 /* all procedures are expected to be children of the root node */
 static void get_procs(struct array_list *procs, const struct ast_node *root)
 {
-        for (int i = 0; i < root->children.size; i++) {
+        for (int i = 0; i < root->children.size; ++i) {
                 const struct ast_node *node = ast_node_child(root, i);
                 const struct token *name = ast_node_token(node, 0);
 
@@ -28,7 +28,8 @@ static void get_procs(struct array_list *procs, const struct ast_node *root)
                         continue;
 
                 struct proc proc = {
-                        .name = name->value, .node = node,
+                        .name = name->value,
+                        .node = node,
                 };
 
                 add_array_list_elem(procs, &proc);
@@ -38,7 +39,7 @@ static void get_procs(struct array_list *procs, const struct ast_node *root)
 static const struct proc *find_proc(const struct array_list *procs,
                                     const char *name)
 {
-        for (int i = 0; i < procs->size; i++) {
+        for (int i = 0; i < procs->size; ++i) {
                 const struct proc *proc = array_list_elem(procs, i);
 
                 if (strcmp(proc->name, name) == 0)
@@ -64,7 +65,7 @@ static void call_proc(const struct array_list *procs, const char *name)
 
 static inline void exec_log(const struct ast_node *node)
 {
-        for (int i = 0; i < node->toks.size; i++) {
+        for (int i = 0; i < node->toks.size; ++i) {
                 const struct token *msg = ast_node_token(node, i);
                 log_info(msg->value);
         }
@@ -73,7 +74,7 @@ static inline void exec_log(const struct ast_node *node)
 static inline void exec_call(const struct ast_node *node,
                              const struct array_list *procs)
 {
-        for (int i = 0; i < node->toks.size; i++) {
+        for (int i = 0; i < node->toks.size; ++i) {
                 const struct token *name = ast_node_token(node, i);
                 call_proc(procs, name->value);
         }
@@ -81,7 +82,7 @@ static inline void exec_call(const struct ast_node *node,
 
 static inline void exec_cmd(const struct ast_node *node)
 {
-        for (int i = 0; i < node->toks.size; i++) {
+        for (int i = 0; i < node->toks.size; ++i) {
                 const struct token *cmd = ast_node_token(node, i);
                 system(cmd->value);
         }
@@ -117,7 +118,7 @@ static void exec_allcmd(const struct ast_node *node)
 static void exec_block(const struct ast_node *node,
                        const struct array_list *procs)
 {
-        for (int i = 0; i < node->children.size; i++) {
+        for (int i = 0; i < node->children.size; ++i) {
                 const struct ast_node *child = ast_node_child(node, i);
 
                 switch (child->type) {

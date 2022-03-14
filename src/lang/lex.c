@@ -15,7 +15,7 @@ void init_tokens(struct array_list *toks)
 
 void clean_tokens(struct array_list *toks)
 {
-        for (int i = 0; i < toks->size; i++) {
+        for (int i = 0; i < toks->size; ++i) {
                 struct token *tok = (struct token *)toks->data + i;
                 free(tok->value);
         }
@@ -68,8 +68,9 @@ static void add_token(struct array_list *toks, enum token_type type,
                       const char *value, int line)
 {
         struct token tok = {
-                .type = type, .value = malloc(strlen(value) + 1),
                 .line = line,
+                .type = type,
+                .value = malloc(strlen(value) + 1),
         };
 
         /* add a null character at the end of the tokens value as it wouldnt
@@ -231,7 +232,7 @@ static char token_type_to_char(enum token_type type)
 
 void print_tokens(const struct array_list *toks)
 {
-        for (int i = 0; i < toks->size; i++) {
+        for (int i = 0; i < toks->size; ++i) {
                 const struct token *tok = array_list_elem(toks, i);
 
                 printf("[%d] (%d, %c) - \"%s\"\n", i, tok->type,

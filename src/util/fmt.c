@@ -15,6 +15,6 @@ void fmt_replace(char *dst, const char *src, const char *replace)
                 else
                         strncat(dst, curchar, 1);
 
-                curchar++;
+                ++curchar;
         }
 }
