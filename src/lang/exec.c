@@ -23,7 +23,6 @@ static void get_procs(struct array_list *procs, const struct ast_node *root)
         for (int i = 0; i < root->children.size; ++i) {
                 const struct ast_node *node = ast_node_child(root, i);
                 const struct token *name = ast_node_token(node, 0);
-
                 if (node->type != AST_NODE_TYPE_PROC)
                         continue;
                 struct proc proc = {
@@ -42,7 +41,6 @@ static const struct proc *find_proc(const struct array_list *procs,
                 if (strcmp(proc->name, name) == 0)
                         return proc;
         }
-
         return NULL;
 }
 
