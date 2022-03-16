@@ -19,7 +19,6 @@ void clean_tokens(struct array_list *toks)
                 struct token *tok = (struct token *)toks->data + i;
                 free(tok->value);
         }
-
         clean_array_list(toks);
 }
 
@@ -102,9 +101,7 @@ static void lex_special(struct array_list *toks, const char **curchar,
         char buf[2] = {
                 **curchar, '\0',
         };
-
         add_token(toks, char_to_token_type(**curchar), buf, line);
-
         ++*curchar;
 }
 
@@ -112,12 +109,10 @@ static void lex_num_literal(struct array_list *toks, const char **curchar,
                             int line)
 {
         char buf[LEX_BUFFER_SIZE] = { 0 };
-
         while (isdigit(**curchar) || **curchar == '.') {
                 strncat(buf, *curchar, 1);
                 ++*curchar;
         }
-
         add_token(toks, TOKEN_TYPE_NUMLITERAL, buf, line);
 }
 
@@ -133,7 +128,6 @@ static void lex_str_literal(struct array_list *toks, const char **curchar,
                 strncat(buf, *curchar, 1);
                 ++*curchar;
         }
-        
         add_token(toks, TOKEN_TYPE_STRLITERAL, buf, line);
 
         /* skip past last quote or else lex will immediately try to create
@@ -146,12 +140,10 @@ static void lex_identifier(struct array_list *toks, const char **curchar,
                            int line)
 {
         char buf[LEX_BUFFER_SIZE] = { 0 };
-
         while (isalpha(**curchar) || **curchar == '_' || isdigit(**curchar)) {
                 strncat(buf, *curchar, 1);
                 ++*curchar;
         }
-
         add_token(toks, TOKEN_TYPE_IDENTIFIER, buf, line);
 }
 
@@ -161,14 +153,12 @@ static void lex_identifier(struct array_list *toks, const char **curchar,
 void lex(struct array_list *toks, const char *src)
 {
         add_token(toks, TOKEN_TYPE_SOF, "SOF", -1);
-        
         const char *curchar = src;
         int line = 1;
-
         while (*curchar != '\0') {
                 if (*curchar == '\n')
                         ++line;
-                        
+
                 if (*curchar == '`')
                         skip_comment(&curchar);
                 else if (is_special(*curchar))
@@ -182,7 +172,6 @@ void lex(struct array_list *toks, const char *src)
                 else
                         ++curchar;
         }
-
         add_token(toks, TOKEN_TYPE_EOF, "EOF", -1);
 }
 
@@ -234,7 +223,6 @@ void print_tokens(const struct array_list *toks)
 {
         for (int i = 0; i < toks->size; ++i) {
                 const struct token *tok = array_list_elem(toks, i);
-
                 printf("[%d] (%d, %c) - \"%s\"\n", i, tok->type,
                        token_type_to_char(tok->type), tok->value);
         }
