@@ -24,6 +24,5 @@ bool opts_contain(const struct array_list *opts, const char *opt)
                 if (strcmp(opt, array_list_elem(opts, i)) == 0)
                         return true;
         }
-
         return false;
 }

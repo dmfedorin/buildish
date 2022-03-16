@@ -19,7 +19,6 @@ const struct token *ast_node_token(const struct ast_node *node, int ind)
 void init_ast(struct ast_node *root)
 {
         root->type = AST_NODE_TYPE_ROOT;
-
         init_array_list(&root->toks, sizeof(struct token));
         init_array_list(&root->children, sizeof(struct ast_node));
 }
@@ -30,7 +29,6 @@ static void clean_node(struct ast_node *node)
                 struct ast_node *children = node->children.data;
                 clean_node(&children[i]);
         }
-
         clean_array_list(&node->toks);
         clean_array_list(&node->children);
 }
@@ -88,13 +86,11 @@ static struct ast_node *add_ast_node_child(struct ast_node *parent,
         struct ast_node child = {
                 .type = type,
         };
-
         init_array_list(&child.toks, sizeof(struct token));
         init_array_list(&child.children, sizeof(struct ast_node));
         add_array_list_elem(&parent->children, &child);
 
         struct ast_node *children = parent->children.data;
-
         return &children[parent->children.size - 1];
 }
 
@@ -104,7 +100,7 @@ static inline void add_ast_node_token(struct ast_node *node,
         add_array_list_elem(&node->toks, tok);
 }
 
-// extracts every meaningful token between parentheses onto a node
+/* extracts every meaningful token between parentheses onto a node */
 static void extract_paren_tokens(struct ast_node *node,
                                  const struct array_list *toks, int *tokind)
 {
@@ -115,12 +111,10 @@ static void extract_paren_tokens(struct ast_node *node,
                 case TOKEN_TYPE_NUMLITERAL:
                         add_ast_node_token(node,
                                            current_token(toks, *tokind));
-
                         break;
                 default:
                         parser_error(current_token(toks, *tokind),
                                     ERROR_UNHANDLED_TOKEN);
-
                         break;
                 }
 
@@ -145,7 +139,6 @@ static inline void parse_call(struct ast_node *parent,
 {
         struct ast_node *node = add_ast_node_child(parent,
                                                    AST_NODE_TYPE_CALL);
-                                                   
         expect(toks, tokind, TOKEN_TYPE_LPAREN);
         extract_paren_tokens(node, toks, tokind);
 }
@@ -154,7 +147,6 @@ static inline void parse_cmd(struct ast_node *parent,
                              const struct array_list *toks, int *tokind)
 {
         struct ast_node *node = add_ast_node_child(parent, AST_NODE_TYPE_CMD);
-
         expect(toks, tokind, TOKEN_TYPE_LPAREN);
         extract_paren_tokens(node, toks, tokind);
 }
@@ -164,7 +156,6 @@ static void parse_allcmd(struct ast_node *parent,
 {
         struct ast_node *node = add_ast_node_child(parent,
                                                    AST_NODE_TYPE_ALLCMD);
-
         expect(toks, tokind, TOKEN_TYPE_LPAREN);
         expect(toks, tokind, TOKEN_TYPE_STRLITERAL);
         
@@ -191,7 +182,6 @@ static void parse_block(struct ast_node *parent,
 {
         struct ast_node *node = add_ast_node_child(parent,
                                                    AST_NODE_TYPE_BLOCK);
-
         while (next_token(toks, tokind)->type != TOKEN_TYPE_RBRACE) {
                 switch (current_token(toks, *tokind)->type) {
                 case TOKEN_TYPE_LBRACE:
@@ -212,10 +202,8 @@ static void parse_block(struct ast_node *parent,
                 default:
                         parser_error(current_token(toks, *tokind),
                                      ERROR_UNHANDLED_TOKEN);
-
                         break;
                 }
-
                 expect(toks, tokind, TOKEN_TYPE_SEMICOLON);
         }
 }
@@ -225,11 +213,8 @@ static void parse_proc(struct ast_node *parent, const struct array_list *toks,
 {
         struct ast_node *node = add_ast_node_child(parent,
                                                    AST_NODE_TYPE_PROC);
-
         expect(toks, tokind, TOKEN_TYPE_IDENTIFIER);
-
         add_ast_node_token(node, current_token(toks, *tokind));
-        
         expect(toks, tokind, TOKEN_TYPE_LBRACE);
         parse_block(node, toks, tokind);
 }
@@ -238,7 +223,6 @@ static void parse_proc(struct ast_node *parent, const struct array_list *toks,
 void parse(struct ast_node *root, const struct array_list *toks)
 {
         int tokind = 0;
-
         while (next_token(toks, &tokind)->type != TOKEN_TYPE_EOF) {
                 switch (current_token(toks, tokind)->type) {
                 case TOKEN_TYPE_AT:
@@ -247,7 +231,6 @@ void parse(struct ast_node *root, const struct array_list *toks)
                 default:
                         parser_error(current_token(toks, tokind),
                                      ERROR_UNHANDLED_TOKEN);
-
                         break;
                 }
         }
@@ -272,14 +255,12 @@ static void print_ast_node(const struct ast_node *node, int depth)
 {
         for (int i = 0; i < depth; ++i)
                 printf("\t");
-
         printf("| %s [", ast_node_type_to_str(node->type));
 
         for (int i = 0; i < node->toks.size; ++i) {
                 const struct token *tok = ast_node_token(node, i);
                 printf("%s, ", tok->value);
         }
-
         printf("]\n");
 
         for (int i = 0; i < node->children.size; ++i) {

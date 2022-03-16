@@ -32,6 +32,5 @@ void add_array_list_elem(struct array_list *al, const void *elem)
 {
         ++al->size;
         al->data = realloc(al->data, al->stride * al->size);
-
         memcpy(last_array_list_elem(al), elem, al->stride);
 }
