@@ -89,7 +89,6 @@ static struct ast_node *add_ast_node_child(struct ast_node *parent,
         init_array_list(&child.toks, sizeof(struct token));
         init_array_list(&child.children, sizeof(struct ast_node));
         add_array_list_elem(&parent->children, &child);
-
         struct ast_node *children = parent->children.data;
         return &children[parent->children.size - 1];
 }
@@ -117,8 +116,7 @@ static void extract_paren_tokens(struct ast_node *node,
                                     ERROR_UNHANDLED_TOKEN);
                         break;
                 }
-
-                /* unconditionally expecting will force an unnecessary comma
+                /* unconditionally expecting would force an unnecessary comma
                  * to be required after the last token
                  */
                 if (peek_token(toks, *tokind)->type != TOKEN_TYPE_RPAREN)
@@ -158,22 +156,13 @@ static void parse_allcmd(struct ast_node *parent,
                                                    AST_NODE_TYPE_ALLCMD);
         expect(toks, tokind, TOKEN_TYPE_LPAREN);
         expect(toks, tokind, TOKEN_TYPE_STRLITERAL);
-        
-        /* directory */
-        add_ast_node_token(node, current_token(toks, *tokind));
-        
+        add_ast_node_token(node, current_token(toks, *tokind)); /* dir */
         expect(toks, tokind, TOKEN_TYPE_COMMA);
         expect(toks, tokind, TOKEN_TYPE_STRLITERAL);
-        
-        /* file extension */
-        add_ast_node_token(node, current_token(toks, *tokind));
-        
+        add_ast_node_token(node, current_token(toks, *tokind)); /* file ext */
         expect(toks, tokind, TOKEN_TYPE_COMMA);
         expect(toks, tokind, TOKEN_TYPE_STRLITERAL);
-        
-        /* command */
-        add_ast_node_token(node, current_token(toks, *tokind));
-        
+        add_ast_node_token(node, current_token(toks, *tokind)); /* command */
         expect(toks, tokind, TOKEN_TYPE_RPAREN);
 }
 
@@ -239,14 +228,13 @@ void parse(struct ast_node *root, const struct array_list *toks)
 static const char *ast_node_type_to_str(enum ast_node_type type)
 {
         switch (type) {
-        case AST_NODE_TYPE_ROOT:   return "root";
-        case AST_NODE_TYPE_PROC:   return "procedure";
-        case AST_NODE_TYPE_BLOCK:  return "block";
+        case AST_NODE_TYPE_ROOT: return "root";
+        case AST_NODE_TYPE_PROC: return "procedure";
+        case AST_NODE_TYPE_BLOCK: return "block";
         case AST_NODE_TYPE_ALLCMD: return "allcommand";
-        case AST_NODE_TYPE_CMD:    return "command";
-        case AST_NODE_TYPE_CALL:   return "call";
-        case AST_NODE_TYPE_LOG:    return "log";
-
+        case AST_NODE_TYPE_CMD: return "command";
+        case AST_NODE_TYPE_CALL: return "call";
+        case AST_NODE_TYPE_LOG: return "log";
         default: return "unknown";
         }
 }
@@ -256,13 +244,11 @@ static void print_ast_node(const struct ast_node *node, int depth)
         for (int i = 0; i < depth; ++i)
                 printf("\t");
         printf("| %s [", ast_node_type_to_str(node->type));
-
         for (int i = 0; i < node->toks.size; ++i) {
                 const struct token *tok = ast_node_token(node, i);
                 printf("%s, ", tok->value);
         }
         printf("]\n");
-
         for (int i = 0; i < node->children.size; ++i) {
                 const struct ast_node *child = ast_node_child(node, i);
                 print_ast_node(child, depth + 1);

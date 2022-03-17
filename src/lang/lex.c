@@ -44,7 +44,6 @@ static enum token_type char_to_token_type(char c)
         case '|': return TOKEN_TYPE_PIPE;
         case '/': return TOKEN_TYPE_SLASH;
         case '?': return TOKEN_TYPE_QUESTION;
-
         case '(': return TOKEN_TYPE_LPAREN;
         case ')': return TOKEN_TYPE_RPAREN;
         case '[': return TOKEN_TYPE_LBRACKET;
@@ -53,7 +52,6 @@ static enum token_type char_to_token_type(char c)
         case '}': return TOKEN_TYPE_RBRACE;
         case '<': return TOKEN_TYPE_LANGLE;
         case '>': return TOKEN_TYPE_RANGLE;
-
         default: return TOKEN_TYPE_NULL;
         }
 }
@@ -71,24 +69,18 @@ static void add_token(struct array_list *toks, enum token_type type,
                 .type = type,
                 .value = malloc(strlen(value) + 1),
         };
-
-        /* add a null character at the end of the tokens value as it wouldnt
-         * normally be added, and is required in null terminated strings
-         */
-        tok.value[strlen(value)] = '\0';
-
+        tok.value[strlen(value)] = '\0'; /* null terminate token value */
         memcpy(tok.value, value, strlen(value));
         add_array_list_elem(toks, &tok);
 }
 
 static void skip_comment(const char **curchar)
 {
-        /* the first backtick will end the comment if not skipped */
-        ++*curchar;
-
+        ++*curchar; /* the first backtick will end the comment if not
+                     * skipped
+                     */
         while (**curchar != '`')
                 ++*curchar;
-        
         /* skip one more character to stop another comment from being started
          * during lexing
          */
@@ -120,16 +112,12 @@ static void lex_str_literal(struct array_list *toks, const char **curchar,
                             int line)
 {
         char buf[LEX_BUFFER_SIZE] = { 0 };
-
-        /* dont lex the first quote of the string */
-        ++*curchar;
-
+        ++*curchar; /* dont lex the first quote of the string */
         while (**curchar != '"') {
                 strncat(buf, *curchar, 1);
                 ++*curchar;
         }
         add_token(toks, TOKEN_TYPE_STRLITERAL, buf, line);
-
         /* skip past last quote or else lex will immediately try to create
          * another string literal, causing a segfault
          */
@@ -158,7 +146,6 @@ void lex(struct array_list *toks, const char *src)
         while (*curchar != '\0') {
                 if (*curchar == '\n')
                         ++line;
-
                 if (*curchar == '`')
                         skip_comment(&curchar);
                 else if (is_special(*curchar))
@@ -179,42 +166,38 @@ static char token_type_to_char(enum token_type type)
 {
         switch (type) {
         case TOKEN_TYPE_NULL: return 'N';
-        case TOKEN_TYPE_SOF:  return 'S';
-        case TOKEN_TYPE_EOF:  return 'E';
-
-        case TOKEN_TYPE_TILDE:       return '~';
+        case TOKEN_TYPE_SOF: return 'S';
+        case TOKEN_TYPE_EOF: return 'E';
+        case TOKEN_TYPE_TILDE: return '~';
         case TOKEN_TYPE_EXCLAMATION: return '!';
-        case TOKEN_TYPE_AT:          return '@';
-        case TOKEN_TYPE_HASH:        return '#';
-        case TOKEN_TYPE_DOLLAR:      return '$';
-        case TOKEN_TYPE_PERCENTAGE:  return '%';
-        case TOKEN_TYPE_CARET:       return '^';
-        case TOKEN_TYPE_AMPERSAND:   return '&';
-        case TOKEN_TYPE_ASTERISK:    return '*';
-        case TOKEN_TYPE_HYPHEN:      return '-';
-        case TOKEN_TYPE_EQUALS:      return '=';
-        case TOKEN_TYPE_PLUS:        return '+';
-        case TOKEN_TYPE_SEMICOLON:   return ';';
-        case TOKEN_TYPE_COLON:       return ':';
-        case TOKEN_TYPE_COMMA:       return ',';
-        case TOKEN_TYPE_PERIOD:      return '.';
-        case TOKEN_TYPE_PIPE:        return '|';
-        case TOKEN_TYPE_SLASH:       return '/';
-        case TOKEN_TYPE_QUESTION:    return '?';
-
-        case TOKEN_TYPE_LPAREN:   return '(';
-        case TOKEN_TYPE_RPAREN:   return ')';
+        case TOKEN_TYPE_AT: return '@';
+        case TOKEN_TYPE_HASH: return '#';
+        case TOKEN_TYPE_DOLLAR: return '$';
+        case TOKEN_TYPE_PERCENTAGE: return '%';
+        case TOKEN_TYPE_CARET: return '^';
+        case TOKEN_TYPE_AMPERSAND: return '&';
+        case TOKEN_TYPE_ASTERISK: return '*';
+        case TOKEN_TYPE_HYPHEN: return '-';
+        case TOKEN_TYPE_EQUALS: return '=';
+        case TOKEN_TYPE_PLUS: return '+';
+        case TOKEN_TYPE_SEMICOLON: return ';';
+        case TOKEN_TYPE_COLON: return ':';
+        case TOKEN_TYPE_COMMA: return ',';
+        case TOKEN_TYPE_PERIOD: return '.';
+        case TOKEN_TYPE_PIPE: return '|';
+        case TOKEN_TYPE_SLASH: return '/';
+        case TOKEN_TYPE_QUESTION: return '?';
+        case TOKEN_TYPE_LPAREN: return '(';
+        case TOKEN_TYPE_RPAREN: return ')';
         case TOKEN_TYPE_LBRACKET: return '[';
         case TOKEN_TYPE_RBRACKET: return ']';
-        case TOKEN_TYPE_LBRACE:   return '{';
-        case TOKEN_TYPE_RBRACE:   return '}';
-        case TOKEN_TYPE_LANGLE:   return '<';
-        case TOKEN_TYPE_RANGLE:   return '>';
-
+        case TOKEN_TYPE_LBRACE: return '{';
+        case TOKEN_TYPE_RBRACE: return '}';
+        case TOKEN_TYPE_LANGLE: return '<';
+        case TOKEN_TYPE_RANGLE: return '>';
         case TOKEN_TYPE_NUMLITERAL: return 'n';
         case TOKEN_TYPE_STRLITERAL: return 's';
         case TOKEN_TYPE_IDENTIFIER: return 'i';
-
         default: return 'U';
         }
 }

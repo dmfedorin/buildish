@@ -1,1 +1,1 @@
-gcc -o build/buildish src/*.c src/*/*.c -O3 -Iinclude
+gcc -o build/buildish src/*.c src/*/*.c -O3 -Iinclude -std=gnu11 -pedantic

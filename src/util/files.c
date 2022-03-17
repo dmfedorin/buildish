@@ -10,10 +10,8 @@ int file_size(const char *filepath)
         FILE *fp = fopen(filepath, "rb");
         if (fp == NULL)
                 error(ERROR_NO_FILE);
-                
         fseek(fp, 0, SEEK_END);
         int size = ftell(fp);
-
         fseek(fp, 0, SEEK_SET);
         fclose(fp);
         return size;

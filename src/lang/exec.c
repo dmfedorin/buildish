@@ -86,11 +86,9 @@ static void exec_allcmd(const struct ast_node *node)
         const struct token *dir = ast_node_token(node, 0);
         const struct token *ext = ast_node_token(node, 1);
         const struct token *cmd = ast_node_token(node, 2);
-
         DIR *d = opendir(dir->value);
         if (d == NULL)
                 error(ERROR_NO_DIR);
-
         const struct dirent *de;
         for (de = readdir(d); de != NULL; de = readdir(d)) {
                 if (de->d_type != DT_REG)
